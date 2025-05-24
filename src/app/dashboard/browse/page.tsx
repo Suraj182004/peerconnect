@@ -9,7 +9,7 @@ import { StudentCard } from '@/components/cards/StudentCard';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
-import { Search, ListFilter, LayoutGrid, List, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, ListFilter, LayoutGrid, List } from 'lucide-react';
 import { SORT_OPTIONS, FILTER_CATEGORIES, SEARCH_CONFIG } from '@/lib/constants';
 import { DEPARTMENTS, ACADEMIC_YEARS, POPULAR_SKILLS, INTERESTS, PROJECT_AREAS } from '@/lib/types'; // Corrected import
 import useDebounce from '@/hooks/useDebounce';
@@ -23,8 +23,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 const BrowseStudentsPage = () => {
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [allOtherProfiles, setAllOtherProfiles] = useState<UserProfile[]>([]);
-  const [filteredAndSortedProfiles, setFilteredAndSortedProfiles] = useState<UserProfile[]>([]);
-  const [paginatedProfiles, setPaginatedProfiles] = useState<UserProfile[]>([]);
+  const [displayedProfiles, setDisplayedProfiles] = useState<UserProfile[]>([]);
   
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, SEARCH_CONFIG.DEBOUNCE_MS);
@@ -34,8 +33,6 @@ const BrowseStudentsPage = () => {
   
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = SEARCH_CONFIG.BROWSE_PAGE_SIZE;
 
   useEffect(() => {
     const user = getUserProfile();
@@ -100,26 +97,9 @@ const BrowseStudentsPage = () => {
         break;
     }
 
-    setFilteredAndSortedProfiles(profiles);
-    setCurrentPage(1); // Reset to first page whenever filters/sort/search changes
+    setDisplayedProfiles(profiles);
 
   }, [debouncedSearchTerm, activeFilters, sortOption, allOtherProfiles]);
-
-  useEffect(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    setPaginatedProfiles(filteredAndSortedProfiles.slice(startIndex, endIndex));
-  }, [filteredAndSortedProfiles, currentPage, ITEMS_PER_PAGE]);
-
-  const totalPages = Math.ceil(filteredAndSortedProfiles.length / ITEMS_PER_PAGE);
-
-  const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  };
-
-  const handlePrevPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-  };
 
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -195,7 +175,7 @@ const BrowseStudentsPage = () => {
         <div className="relative flex-grow w-full md:w-auto">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
           <Input 
-            placeholder={`Search ${filteredAndSortedProfiles.length} students...`}
+            placeholder={`Search ${allOtherProfiles.length} students...`}
             className="pl-10 text-base h-11 w-full"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -216,9 +196,9 @@ const BrowseStudentsPage = () => {
               <SheetTrigger asChild>
                 <Button variant="outline" className="h-11 w-full md:w-auto">
                     <ListFilter className="w-4 h-4 mr-2" /> Filters 
-                    {Object.values(activeFilters).reduce((acc, val) => acc + (Array.isArray(val) ? val.length : 0), 0) > 0 && 
+                    {Object.values(activeFilters).flat().length > 0 && 
                         <Badge variant="secondary" className="ml-2 rounded-full px-1.5 py-0.5 text-xs">
-                            {Object.values(activeFilters).reduce((acc, val) => acc + (Array.isArray(val) ? val.length : 0), 0)}
+                            {Object.values(activeFilters).flat().length}
                         </Badge>
                     }
                 </Button>
@@ -276,68 +256,46 @@ const BrowseStudentsPage = () => {
         </div>
       </motion.div>
 
-      {paginatedProfiles.length > 0 ? (
-        <motion.div 
-          key={viewMode}
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-          className={viewMode === 'grid' 
-            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6"
-            : "space-y-6"}
-        >
-          {paginatedProfiles.map(profile => (
-            <motion.div key={profile.id} variants={fadeInUp}>
-              <StudentCard 
-                profile={profile} 
-              />
-            </motion.div>
-          ))}
+      {displayedProfiles.length === 0 && (debouncedSearchTerm || Object.keys(activeFilters).length > 0) && (
+        <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="text-center py-12">
+            <Search className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-semibold">No Students Found</h3>
+            <p className="text-muted-foreground mt-1">Try adjusting your search or filters.</p>
         </motion.div>
-      ) : (
-        <motion.div
-          variants={fadeInUp}
-          initial="hidden"
-          animate="visible"
-          className="text-center py-12"
-        >
-          <Users className="mx-auto h-12 w-12 text-muted-foreground" /> 
-          <h3 className="mt-2 text-xl font-semibold text-foreground">No Students Found</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Try adjusting your search or filters.
-          </p>
+      )}
+      
+      {displayedProfiles.length === 0 && !debouncedSearchTerm && Object.keys(activeFilters).length === 0 && (
+         <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="text-center py-12">
+            <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-semibold">Discover Your Peers</h3>
+            <p className="text-muted-foreground mt-1">Use the search and filters above to find students.</p>
         </motion.div>
       )}
 
-      {totalPages > 1 && (
-        <motion.div 
-          variants={fadeInUp}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.2 }}
-          className="mt-8 flex justify-center items-center gap-4"
-        >
-          <Button 
-            variant="outline" 
-            onClick={handlePrevPage} 
-            disabled={currentPage === 1}
-            className="h-10 px-4"
-          >
-            <ChevronLeft className="w-4 h-4 mr-2" /> Previous
-          </Button>
-          <span className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages}
-          </span>
-          <Button 
-            variant="outline" 
-            onClick={handleNextPage} 
-            disabled={currentPage === totalPages}
-            className="h-10 px-4"
-          >
-            Next <ChevronRight className="w-4 h-4 ml-2" />
-          </Button>
-        </motion.div>
+      <motion.div 
+        key={viewMode} 
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+        className={
+          viewMode === 'grid' 
+            ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5"
+            : "space-y-4"
+        }
+      >
+        {displayedProfiles.map(profile => (
+          <motion.div key={profile.id} variants={fadeInUp}>
+            <StudentCard profile={profile} /> 
+          </motion.div>
+        ))}
+      </motion.div>
+      
+      {displayedProfiles.length > SEARCH_CONFIG.RESULTS_PER_PAGE && (
+          <div className="mt-12 flex justify-center">
+              <Button variant="outline">Load More Students</Button>
+          </div>
       )}
+
     </div>
   );
 };

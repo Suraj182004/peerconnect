@@ -34,8 +34,8 @@ export interface SocialLinks {
 // Connection Types
 export interface Connection {
   id: string;
-  userId: string;
-  connectedUserId: string;
+  userId1: string;
+  userId2: string;
   status: ConnectionStatus;
   createdAt: Date;
   message?: string;
