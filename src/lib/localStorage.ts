@@ -248,8 +248,9 @@ class LocalStorageManager {
         searchFilters: this.getSearchFilters(),
         uiPreferences: this.getUIPreferences(),
       };
-    } catch (error) {
-      console.error('Error exporting data:', error);
+    } catch {
+      // Error exporting data
+      console.error('Error exporting data');
       return null;
     }
   }
@@ -277,8 +278,9 @@ class LocalStorageManager {
       }
       
       return true;
-    } catch (error) {
-      console.error('Error importing data:', error);
+    } catch {
+      // Error importing data
+      console.error('Error importing data');
       return false;
     }
   }
@@ -294,8 +296,9 @@ class LocalStorageManager {
           size += localStorage[key].length;
         }
       }
-    } catch (error) {
-      console.error('Error calculating storage size:', error);
+    } catch {
+      // Error calculating storage size
+      console.error('Error calculating storage size');
     }
     
     return size;
@@ -309,7 +312,8 @@ class LocalStorageManager {
       localStorage.setItem(test, 'test');
       localStorage.removeItem(test);
       return true;
-    } catch (error) {
+    } catch {
+      // Storage not available
       return false;
     }
   }

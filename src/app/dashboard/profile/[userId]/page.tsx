@@ -14,6 +14,7 @@ import { Edit3, Mail, MapPin, Briefcase, Linkedin, Github, Twitter, ExternalLink
 import Link from 'next/link';
 import { useConnections } from '@/hooks/useConnections';
 import AiAnalysisDialog from '@/components/dialogs/AiAnalysisDialog';
+import Image from 'next/image';
 
 const socialIconMap: { [key: string]: React.ElementType } = {
   linkedin: Linkedin,
@@ -327,8 +328,15 @@ const DynamicUserProfilePage = () => {
                     className="p-4 rounded-lg border border-border/70 hover:shadow-md transition-shadow bg-card/50 hover:bg-card/90"
                   >
                     {proj.imageUrl && (
-                        <div className="mb-3 rounded-md overflow-hidden border border-border/50 max-h-48">
-                            <img src={proj.imageUrl} alt={proj.title} className="w-full h-full object-cover"/>
+                        <div className="mb-3 rounded-md overflow-hidden border border-border/50 max-h-48 relative">
+                            <Image 
+                                src={proj.imageUrl} 
+                                alt={proj.title} 
+                                width={800}
+                                height={450}
+                                className="w-full h-full object-cover"
+                                style={{ objectFit: 'cover' }}
+                            />
                         </div>
                     )}
                     <h3 className="font-semibold text-base text-foreground">{proj.title}</h3>

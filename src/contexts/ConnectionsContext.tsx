@@ -192,8 +192,7 @@ export const ConnectionsProvider: React.FC<ConnectionsProviderProps> = ({ childr
       toast.error('Failed to remove connection.', { id: toastId });
     }
     setIsLoading(false);
-  }, [internalSaveConnections]); // internalSaveConnections might not be needed if LS manager handles it and we re-fetch or filter state.
-                                 // For now, explicitly setting state after LS call.
+  }, []); // Removed dependency
 
   const cancelSentRequest = useCallback(async (requestId: string) => {
     setIsLoading(true);
@@ -205,7 +204,7 @@ export const ConnectionsProvider: React.FC<ConnectionsProviderProps> = ({ childr
 
     setIsLoading(false);
     toast.success('Request cancelled.', { id: toastId });
-  }, [sentRequests, internalSaveSentRequests]);
+  }, [sentRequests]); // Removed internalSaveSentRequests dependency
   
   const getConnectionsByUserId = useCallback((userId: string): Connection[] => {
     return connections.filter(conn => (conn.userId1 === userId || conn.userId2 === userId) && conn.status === 'accepted');
