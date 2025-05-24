@@ -17,6 +17,9 @@ export interface UserProfile {
   socialLinks?: SocialLinks;
   createdAt: Date;
   updatedAt: Date;
+  recentActivity?: UserActivity[];
+  projects?: Project[];
+  experience?: Experience[];
 }
 
 export interface SocialLinks {
@@ -78,6 +81,8 @@ export type ActivityType =
   | 'connection_made'
   | 'skill_added'
   | 'project_shared'
+  | 'project_updated'
+  | 'experience_added'
   | 'profile_updated';
 
 // Dashboard Stats
@@ -355,4 +360,57 @@ export type Department = typeof DEPARTMENTS[number];
 export type AcademicYear = typeof ACADEMIC_YEARS[number];
 export type Skill = typeof POPULAR_SKILLS[number];
 export type Interest = typeof INTERESTS[number];
-export type ProjectArea = typeof PROJECT_AREAS[number]; 
+export type ProjectArea = typeof PROJECT_AREAS[number];
+
+export interface QuickAction {
+  id: string;
+  title: string;
+  description: string;
+  href: string;
+  icon: string;
+  color?: string;
+}
+
+export interface UserActivity {
+  id: string;
+  user?: {
+    id: string;
+    name: string;
+    avatar?: string;
+  };
+  type: ActivityType;
+  description: string;
+  timestamp: string;
+  details?: {
+    title?: string;
+    content?: string;
+    link?: string;
+  };
+  icon?: string;
+}
+
+// Project and Experience Types
+export interface Project {
+  id: string;
+  title: string;
+  description: string;
+  technologies?: string[];
+  startDate?: string; // Or Date
+  endDate?: string; // Or Date
+  url?: string;
+  repoUrl?: string;
+  imageUrl?: string;
+}
+
+export interface Experience {
+  id: string;
+  title: string;
+  companyName: string;
+  location?: string;
+  employmentType?: 'Full-time' | 'Part-time' | 'Internship' | 'Freelance' | 'Contract' | 'Volunteer';
+  startDate: string; // Or Date
+  endDate?: string; // Or Date, or 'Present'
+  description: string;
+  skills?: string[];
+  companyLogo?: string;
+} 

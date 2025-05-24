@@ -1,353 +1,267 @@
-import { UserProfile, Connection, Activity, DashboardStats } from './types';
+import { UserProfile, Connection, Activity, DashboardStats, SearchFilters } from './types';
 
-// Mock Student Profiles
+// Mock Student Profiles with Indian Context
 export const mockProfiles: UserProfile[] = [
   {
     id: '1',
-    firstName: 'Sophia',
-    lastName: 'Carter',
-    email: 'sophia.carter@stanford.edu',
-    collegeId: 'SC2024001',
+    firstName: 'Priya',
+    lastName: 'Sharma',
+    email: 'priya.sharma@marwadiuniversity.ac.in',
+    collegeId: 'MU2024001',
     year: 'Junior',
-    department: 'Computer Science',
-    university: 'Stanford University',
-    location: 'Palo Alto, CA',
-    avatar: '/avatars/sophia-carter.jpg',
-    skills: ['JavaScript', 'React', 'Node.js', 'Python', 'Machine Learning', 'UI/UX Design'],
-    interests: ['Web Development', 'AI/ML', 'Startup', 'Photography'],
-    projectAreas: ['Web Development', 'AI/Machine Learning', 'Startup'],
-    bio: 'Passionate CS student interested in building AI-powered web applications. Currently working on a machine learning project for image recognition. Always excited to collaborate on innovative tech projects!',
+    department: 'Computer Engineering',
+    university: 'Marwadi University',
+    location: 'Rajkot, Gujarat',
+    avatar: '/avatars/priya-sharma.jpg', // Placeholder
+    skills: ['JavaScript', 'React', 'Node.js', 'MongoDB', 'Express.js', 'Cloud Computing'],
+    interests: ['Web Development', 'AI/ML', 'Startup Ecosystem', 'Yoga'],
+    projectAreas: ['Web Development', 'AI/Machine Learning', 'Fintech'],
+    bio: 'Aspiring Full-Stack Developer passionate about building scalable web applications and exploring AI. Actively looking for challenging projects and collaborations.',
     socialLinks: {
-      linkedin: 'sophiacarter',
-      github: 'sophia-carter',
-      portfolio: 'https://sophiacarter.dev'
+      linkedin: 'priyasharma-dev',
+      github: 'priya-sharma',
+      portfolio: 'https://priyasharma.dev'
     },
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-20'),
+    createdAt: new Date('2024-02-10'),
+    updatedAt: new Date('2024-03-15'),
+    recentActivity: [
+      { id: 'act1-1', type: 'project_shared', description: 'Started a new project: "CampusConnect - A student utility app".', timestamp: '3d ago', details: { title: 'CampusConnect App'} },
+      { id: 'act1-2', type: 'connection_made', description: 'Connected with Rohan Patel.', timestamp: '5d ago', user: {id: '2', name: 'Rohan Patel', avatar: '/avatars/rohan-patel.jpg'} },
+    ],
+    projects: [
+      { id: 'proj1-1', title: 'E-commerce Platform for Local Artisans', description: 'Developed a full-stack e-commerce website to help local artisans sell their products online. Implemented using MERN stack.', technologies: ['React', 'Node.js', 'MongoDB', 'Stripe API'], startDate: 'Jun 2023', endDate: 'Dec 2023', repoUrl: 'https://github.com/priya-sharma/artisan-ecommerce' },
+      { id: 'proj1-2', title: 'AI Powered Chatbot for Student Queries', description: 'Built an intelligent chatbot for Marwadi University to answer frequently asked student questions using NLP.', technologies: ['Python', 'Dialogflow', 'Firebase'], startDate: 'Jan 2024', endDate: 'Present', url: 'https://mu-chatbot.dev' }
+    ],
+    experience: [
+      { id: 'exp1-1', title: 'Web Development Intern', companyName: 'TechSolutions Pvt. Ltd.', location: 'Ahmedabad', employmentType: 'Internship', startDate: 'May 2023', endDate: 'Aug 2023', description: 'Worked on developing and maintaining client websites using React and Django. Gained experience in agile methodologies.' }
+    ]
   },
   {
     id: '2',
-    firstName: 'Ethan',
-    lastName: 'Bennett',
-    email: 'ethan.bennett@mit.edu',
-    collegeId: 'EB2023045',
+    firstName: 'Rohan',
+    lastName: 'Patel',
+    email: 'rohan.p@darshan.ac.in',
+    collegeId: 'DU2023045',
     year: 'Senior',
-    department: 'Engineering',
-    university: 'MIT',
-    location: 'Cambridge, MA',
-    avatar: '/avatars/ethan-bennett.jpg',
-    skills: ['Java', 'C++', 'Python', 'Robotics', 'Embedded Systems', 'Project Management'],
-    interests: ['Robotics', 'IoT', 'Research', 'Music'],
-    projectAreas: ['IoT', 'Research', 'Academic Projects'],
-    bio: 'Robotics engineering student with a passion for autonomous systems. Led multiple research projects in autonomous navigation. Looking to connect with fellow engineers and researchers.',
+    department: 'Mechanical Engineering',
+    university: 'Darshan University',
+    location: 'Rajkot, Gujarat',
+    avatar: '/avatars/rohan-patel.jpg', // Placeholder
+    skills: ['AutoCAD', 'SolidWorks', 'Ansys', 'Product Design', '3D Printing', 'Project Management'],
+    interests: ['Automotive Design', 'Robotics', 'Sustainable Energy', 'Cricket'],
+    projectAreas: ['Robotics', 'Product Development', 'Renewable Energy'],
+    bio: 'Final year Mechanical Engineering student with a keen interest in automotive innovation and sustainable technologies. Led the university team in a national-level robotics competition.',
     socialLinks: {
-      linkedin: 'ethanbennett',
-      github: 'ethan-robotics'
+      linkedin: 'rohanpatelme',
+      github: 'rohan-mech'
     },
-    createdAt: new Date('2023-09-10'),
-    updatedAt: new Date('2024-01-18'),
+    createdAt: new Date('2023-08-15'),
+    updatedAt: new Date('2024-03-10'),
+    projects: [
+        { id: 'proj2-1', title: 'Solar Powered Electric Go-Kart', description: 'Designed and fabricated a solar-powered electric go-kart for a national student competition. Responsible for chassis design and power transmission system.', technologies: ['SolidWorks', 'ANSYS', 'Welding', 'Circuit Design'], startDate: 'Sep 2023', endDate: 'Feb 2024' },
+    ],
+    experience: [
+        { id: 'exp2-1', title: 'Intern', companyName: 'Mahindra & Mahindra', location: 'Mumbai', employmentType: 'Internship', startDate: 'Jun 2023', endDate: 'Jul 2023', description: 'Assisted the R&D team in the automotive division with component design and testing.'}
+    ]
   },
   {
     id: '3',
-    firstName: 'Olivia',
-    lastName: 'Hayes',
-    email: 'olivia.hayes@harvard.edu',
-    collegeId: 'OH2024089',
+    firstName: 'Aisha',
+    lastName: 'Khan',
+    email: 'aisha.khan@iitb.ac.in',
+    collegeId: 'IITB2024089',
     year: 'Sophomore',
-    department: 'Business Administration',
-    university: 'Harvard University',
-    location: 'Cambridge, MA',
-    avatar: '/avatars/olivia-hayes.jpg',
-    skills: ['Marketing', 'Data Science', 'Public Speaking', 'Leadership', 'Strategy'],
-    interests: ['Entrepreneurship', 'Marketing', 'Sustainability', 'Travel'],
-    projectAreas: ['Startup', 'Marketing', 'Sustainability'],
-    bio: 'Business student with a focus on sustainable entrepreneurship. Co-founded a startup focused on eco-friendly products. Always looking for like-minded individuals to collaborate on impactful projects.',
+    department: 'Computer Science & Engineering',
+    university: 'IIT Bombay',
+    location: 'Mumbai, Maharashtra',
+    avatar: '/avatars/aisha-khan.jpg', // Placeholder
+    skills: ['Python', 'C++', 'Data Structures', 'Algorithms', 'Machine Learning', 'Competitive Programming'],
+    interests: ['Artificial Intelligence', 'Competitive Coding', 'Photography', 'Reading Sci-Fi'],
+    projectAreas: ['AI/Machine Learning', 'Algorithm Design', 'Open Source'],
+    bio: 'Driven CSE sophomore at IIT Bombay. Passionate about solving complex problems with code. Active on Codeforces and TopCoder. Exploring deep learning applications.',
     socialLinks: {
-      linkedin: 'oliviahayes',
-      twitter: 'olivia_hayes_'
+      linkedin: 'aishakhan-iitb',
+      github: 'aisha-k',
+      // Add Codeforces/TopCoder if relevant
     },
-    createdAt: new Date('2024-01-05'),
-    updatedAt: new Date('2024-01-19'),
+    createdAt: new Date('2024-01-20'),
+    updatedAt: new Date('2024-03-18'),
+    projects: [
+        {id: 'proj3-1', title: 'Stock Price Predictor', description: 'Developed a machine learning model to predict stock prices using historical data and sentiment analysis from news articles.', technologies: ['Python', 'Scikit-learn', 'Pandas', 'NLTK'], startDate: 'Nov 2023', endDate: 'Jan 2024'}
+    ]
   },
   {
     id: '4',
-    firstName: 'Noah',
-    lastName: 'Thompson',
-    email: 'noah.thompson@berkeley.edu',
-    collegeId: 'NT2025012',
+    firstName: 'Vikram',
+    lastName: 'Singh',
+    email: 'vikram.singh@bits-pilani.ac.in',
+    collegeId: 'BITS2025012',
     year: 'Freshman',
-    department: 'Computer Science',
-    university: 'UC Berkeley',
-    location: 'Berkeley, CA',
-    avatar: '/avatars/noah-thompson.jpg',
-    skills: ['Python', 'JavaScript', 'Data Science', 'Machine Learning', 'Git'],
-    interests: ['Data Science', 'AI/ML', 'Gaming', 'Sports'],
-    projectAreas: ['Data Science', 'AI/Machine Learning', 'Open Source'],
-    bio: 'First-year CS student passionate about data science and machine learning. Currently learning about neural networks and working on predictive modeling projects. Eager to join collaborative coding projects!',
+    department: 'Electronics & Communication',
+    university: 'BITS Pilani (Pilani Campus)',
+    location: 'Pilani, Rajasthan',
+    avatar: '/avatars/vikram-singh.jpg', // Placeholder
+    skills: ['C', 'Verilog', 'Digital Electronics', 'Embedded Systems', 'IoT'],
+    interests: ['IoT', 'Robotics', 'Music Production', 'Trekking'],
+    projectAreas: ['Embedded Systems', 'IoT', 'Hardware Design'],
+    bio: 'First-year ECE student at BITS Pilani. Fascinated by the world of embedded systems and IoT. Building a home automation project using Raspberry Pi.',
     socialLinks: {
-      github: 'noah-codes',
-      portfolio: 'https://noahthompson.tech'
+      github: 'vikram-ece',
     },
-    createdAt: new Date('2024-01-12'),
-    updatedAt: new Date('2024-01-21'),
+    createdAt: new Date('2024-02-01'),
+    updatedAt: new Date('2024-03-12'),
   },
   {
     id: '5',
-    firstName: 'Emma',
-    lastName: 'Rodriguez',
-    email: 'emma.rodriguez@ucla.edu',
-    collegeId: 'ER2023078',
+    firstName: 'Meera',
+    lastName: 'Nair',
+    email: 'meera.nair@nid.edu',
+    collegeId: 'NID2023078',
     year: 'Senior',
-    department: 'Design',
-    university: 'UCLA',
-    location: 'Los Angeles, CA',
-    avatar: '/avatars/emma-rodriguez.jpg',
-    skills: ['UI/UX Design', 'Figma', 'Adobe Creative Suite', 'Prototyping', 'User Research'],
-    interests: ['Design', 'Art', 'Photography', 'Travel'],
-    projectAreas: ['UI/UX Design', 'Mobile Development', 'Startup'],
-    bio: 'UX designer passionate about creating intuitive and beautiful digital experiences. Currently working on my senior capstone project - a mobile app for student wellness. Love collaborating with developers!',
+    department: 'Graphic Design',
+    university: 'National Institute of Design (NID)',
+    location: 'Ahmedabad, Gujarat',
+    avatar: '/avatars/meera-nair.jpg', // Placeholder
+    skills: ['UI/UX Design', 'Figma', 'Adobe Illustrator', 'Adobe Photoshop', 'Typography', 'Branding'],
+    interests: ['Minimalist Design', 'Social Impact Design', 'Illustration', 'Travel'],
+    projectAreas: ['UI/UX Design', 'Branding', 'Social Campaigns'],
+    bio: 'Senior Graphic Design student at NID, specializing in UI/UX and branding. Passionate about creating user-centric and visually compelling designs. My graduation project focuses on designing an accessible learning platform.',
     socialLinks: {
-      linkedin: 'emmarodriguez',
-      portfolio: 'https://emmarodriguez.design',
-      instagram: 'emma_designs'
+      linkedin: 'meeranairdesign',
+      portfolio: 'https://meeranair.design', // Behance/Dribbble could also go here
     },
-    createdAt: new Date('2023-08-20'),
-    updatedAt: new Date('2024-01-17'),
+    createdAt: new Date('2023-07-01'),
+    updatedAt: new Date('2024-03-20'),
+    projects: [
+        {id: 'proj5-1', title: 'Accessible Learning Platform UX', description: 'Lead UX designer for a platform aimed at providing accessible education for visually impaired students. Conducted user research, created wireframes, prototypes, and user testing.', technologies: ['Figma', 'User Research', 'Accessibility Standards'], startDate: 'Aug 2023', endDate: 'Present'},
+        {id: 'proj5-2', title: 'Branding for a Local NGO', description: 'Developed a complete brand identity (logo, color palette, typography, collaterals) for a non-profit organization working on women empowerment.', technologies: ['Adobe Illustrator', 'Adobe Photoshop'], startDate: 'May 2023', endDate: 'Jul 2023'}
+    ],
+    experience: [
+        {id: 'exp5-1', title: 'UI/UX Design Intern', companyName: 'CreativeMinds Studio', location: 'Bengaluru', employmentType: 'Internship', startDate: 'Dec 2022', endDate: 'Feb 2023', description: 'Contributed to mobile app and web design projects for various clients. Involved in brainstorming, wireframing, and creating high-fidelity mockups.'}
+    ]
   },
-  {
-    id: '6',
-    firstName: 'Liam',
-    lastName: 'Chen',
-    email: 'liam.chen@cmu.edu',
-    collegeId: 'LC2024056',
-    year: 'Junior',
-    department: 'Computer Science',
-    university: 'Carnegie Mellon University',
-    location: 'Pittsburgh, PA',
-    avatar: '/avatars/liam-chen.jpg',
-    skills: ['Python', 'Java', 'Cybersecurity', 'Network Security', 'Ethical Hacking'],
-    interests: ['Cybersecurity', 'Gaming', 'Tech', 'Reading'],
-    projectAreas: ['Cybersecurity', 'Research', 'Open Source'],
-    bio: 'Cybersecurity enthusiast focused on network security and ethical hacking. Participate in CTF competitions and security research. Always interested in discussing the latest security trends and vulnerabilities.',
+  // Adding myself as a user
+   {
+    id: 'suraj-yaligar', // Unique ID
+    firstName: 'Suraj',
+    lastName: 'Yaligar',
+    email: 'suraj.yaligar@example.com', // Replace with your actual email if you want
+    collegeId: 'SY2025001',
+    year: 'Junior', // Or your current year
+    department: 'Psychology', // Or your department
+    university: 'Harvard University', // Your college
+    location: 'Cambridge, MA', // Your location
+    avatar: '/avatars/suraj-yaligar.jpg', // Path to your avatar image if you have one
+    skills: ['Public Speaking', 'Marketing', 'Data Science', 'Machine Learning', 'Leadership', 'Node.js', 'UI/UX Design', 'React'],
+    interests: ['Behavioral Economics', 'AI Ethics', 'Product Management', 'Cricket'],
+    projectAreas: ['AI Applications', 'Mental Health Tech', 'EdTech'],
+    bio: 'Psychology student at Harvard, deeply interested in the intersection of human behavior and technology. Exploring how AI can be leveraged for positive social impact, particularly in mental health and education. Always open to connecting with like-minded individuals for exciting projects!',
     socialLinks: {
-      github: 'liam-security',
-      linkedin: 'liamchen'
+      linkedin: 'surajyaligar', // Your LinkedIn
+      github: 'suraj-yaligar-gh', // Your GitHub
+      twitter: 'surajyaligar_tw', // Your Twitter
     },
-    createdAt: new Date('2023-10-05'),
-    updatedAt: new Date('2024-01-16'),
-  },
-  {
-    id: '7',
-    firstName: 'Ava',
-    lastName: 'Patel',
-    email: 'ava.patel@stanford.edu',
-    collegeId: 'AP2025034',
-    year: 'Sophomore',
-    department: 'Medicine',
-    university: 'Stanford University',
-    location: 'Palo Alto, CA',
-    avatar: '/avatars/ava-patel.jpg',
-    skills: ['Research', 'Data Analysis', 'Biology', 'Chemistry', 'Scientific Writing'],
-    interests: ['Research', 'Health Tech', 'Volunteering', 'Music'],
-    projectAreas: ['Research', 'Health Tech', 'Academic Projects'],
-    bio: 'Pre-med student passionate about medical research and health technology. Currently involved in a research project on personalized medicine. Interested in the intersection of technology and healthcare.',
-    socialLinks: {
-      linkedin: 'avapatel'
-    },
-    createdAt: new Date('2024-01-08'),
-    updatedAt: new Date('2024-01-22'),
-  },
-  {
-    id: '8',
-    firstName: 'Mason',
-    lastName: 'Williams',
-    email: 'mason.williams@gatech.edu',
-    collegeId: 'MW2023091',
-    year: 'Senior',
-    department: 'Engineering',
-    university: 'Georgia Institute of Technology',
-    location: 'Atlanta, GA',
-    avatar: '/avatars/mason-williams.jpg',
-    skills: ['C++', 'MATLAB', 'CAD', 'Engineering Design', 'Project Management'],
-    interests: ['Engineering', 'Innovation', 'Sports', 'Outdoor Activities'],
-    projectAreas: ['Engineering Design', 'IoT', 'Academic Projects'],
-    bio: 'Mechanical engineering student with a passion for innovative design solutions. Working on a capstone project involving renewable energy systems. Love building things and solving complex engineering problems.',
-    socialLinks: {
-      linkedin: 'masonwilliams',
-      portfolio: 'https://masonwilliams.eng'
-    },
-    createdAt: new Date('2023-07-15'),
-    updatedAt: new Date('2024-01-14'),
+    createdAt: new Date('2023-05-15'), // Approximate date you'd join
+    updatedAt: new Date(), // Current date
+    projects: [
+      { id: 'proj-sy-1', title: 'AI-Powered Study Buddy', description: 'Conceptualized and designed a prototype for an AI tutor that adapts to individual learning styles. Focused on NLP for understanding student queries and providing personalized feedback.', technologies: ['Figma', 'Python (Conceptual)', 'NLP Principles'], startDate: 'Jan 2024', endDate: 'Present' },
+      { id: 'proj-sy-2', title: 'Mental Wellness Chatbot - "Sahay"', description: 'Led a team to develop a basic chatbot using Dialogflow to provide initial mental wellness support and resources for students. Focused on empathetic response design.', technologies: ['Dialogflow', 'Google Sheets (for KB)', 'UX Writing'], startDate: 'Sep 2023', endDate: 'Dec 2023', url: 'https://sahay-chatbot.example.com' }
+    ],
+    experience: [
+      { id: 'exp-sy-1', title: 'Research Assistant - Cognitive Psychology Lab', companyName: 'Harvard University', location: 'Cambridge, MA', employmentType: 'Part-time', startDate: 'Aug 2023', endDate: 'Present', description: 'Assisting with data collection, literature reviews, and participant recruitment for studies on decision-making and cognitive biases.' },
+      { id: 'exp-sy-2', title: 'Marketing Intern', companyName: 'EdTech Startup (Stealth)', location: 'Remote', employmentType: 'Internship', startDate: 'May 2023', endDate: 'Aug 2023', description: 'Contributed to market research, content creation for social media, and competitor analysis for an upcoming educational platform.' }
+    ]
   }
 ];
 
-// Mock Connections
+// Mock Connections (can remain largely the same or be updated with new IDs)
 export const mockConnections: Connection[] = [
   {
     id: 'conn_1',
-    userId: '1',
-    connectedUserId: '2',
+    userId: '1', // Priya
+    connectedUserId: '2', // Rohan
     status: 'accepted',
-    createdAt: new Date('2024-01-16'),
-    message: 'Hi Ethan! I love your robotics projects. Would love to connect and maybe collaborate!'
+    createdAt: new Date('2024-03-01'),
+    message: 'Hi Rohan! Your work on the go-kart is impressive. Would love to connect.'
   },
   {
     id: 'conn_2',
-    userId: '1',
-    connectedUserId: '3',
-    status: 'accepted',
-    createdAt: new Date('2024-01-18'),
-  },
-  {
-    id: 'conn_3',
-    userId: '1',
-    connectedUserId: '4',
+    userId: '1', // Priya
+    connectedUserId: '3', // Aisha
     status: 'pending',
-    createdAt: new Date('2024-01-20'),
-    message: 'Hey Noah! Fellow CS student here. Your data science projects look amazing!'
+    createdAt: new Date('2024-03-10'),
+    message: 'Hey Aisha! Fellow coder here. Your ML projects look very interesting!'
   },
-  {
-    id: 'conn_4',
-    userId: '2',
-    connectedUserId: '6',
+   {
+    id: 'conn_sy_1',
+    userId: 'suraj-yaligar',
+    connectedUserId: '1', // Priya Sharma
     status: 'accepted',
-    createdAt: new Date('2024-01-15'),
+    createdAt: new Date('2024-03-15'),
+    message: 'Hi Priya, saw your profile on PeerConnect. Your e-commerce project for artisans is fantastic!'
   },
   {
-    id: 'conn_5',
-    userId: '3',
-    connectedUserId: '5',
-    status: 'accepted',
-    createdAt: new Date('2024-01-17'),
-  },
-  {
-    id: 'conn_6',
-    userId: '4',
-    connectedUserId: '8',
+    id: 'conn_sy_2',
+    userId: 'suraj-yaligar',
+    connectedUserId: '5', // Meera Nair
     status: 'pending',
-    createdAt: new Date('2024-01-19'),
+    createdAt: new Date(),
+    message: 'Hello Meera, your design work is stunning, especially the accessible learning platform. Would be great to connect!'
   }
+  // Add more connections as needed
 ];
 
 // Mock Activities
 export const mockActivities: Activity[] = [
+  // ... (Keep some generic ones or update based on new profiles and actions)
   {
-    id: 'act_1',
-    userId: '1',
-    type: 'connection_made',
-    title: 'Connected with Ethan Bennett',
-    description: 'Started networking with fellow engineering student',
-    createdAt: new Date('2024-01-16'),
-    metadata: { connectedUserId: '2' }
+    id: 'act_sy_1',
+    userId: 'suraj-yaligar',
+    type: 'project_updated',
+    title: 'Updated "AI-Powered Study Buddy" project details',
+    createdAt: new Date('2024-03-20'),
+    metadata: { projectId: 'proj-sy-1' }
   },
-  {
-    id: 'act_2',
-    userId: '1',
-    type: 'skill_added',
-    title: 'Added new skill: Machine Learning',
-    description: 'Updated profile with latest technical skills',
-    createdAt: new Date('2024-01-15'),
-    metadata: { skill: 'Machine Learning' }
+   {
+    id: 'act_1_new',
+    userId: '1', // Priya
+    type: 'experience_added',
+    title: 'Added new internship experience at TechSolutions Pvt. Ltd.',
+    createdAt: new Date('2024-03-16'),
+    metadata: { experienceId: 'exp1-1' }
   },
-  {
-    id: 'act_3',
-    userId: '1',
-    type: 'profile_updated',
-    title: 'Updated profile information',
-    description: 'Added project areas and improved bio',
-    createdAt: new Date('2024-01-14'),
-  },
-  {
-    id: 'act_4',
-    userId: '2',
-    type: 'connection_made',
-    title: 'Connected with Liam Chen',
-    description: 'Connected with cybersecurity expert',
-    createdAt: new Date('2024-01-15'),
-    metadata: { connectedUserId: '6' }
-  },
-  {
-    id: 'act_5',
-    userId: '3',
-    type: 'project_shared',
-    title: 'Shared sustainability startup project',
-    description: 'Posted about eco-friendly product initiative',
-    createdAt: new Date('2024-01-13'),
-  }
 ];
 
 // Mock Dashboard Stats
 export const mockDashboardStats: DashboardStats = {
-  totalConnections: 120,
-  profileViews: 89,
-  connectionRequests: 5,
-  skillMatches: 23
+  totalConnections: 78, // Adjusted
+  profileViews: 150, // Adjusted
+  // Removed 'connectionRequests' and 'skillMatches' as they weren't consistently used/defined in DashboardStats type
+  // If needed, they can be added back to the type and here.
+  newMessages: 3 // Added for consistency with UserProfile types
 };
 
-// Additional mock profiles for search/browse functionality
-export const additionalMockProfiles: UserProfile[] = [
-  {
-    id: '9',
-    firstName: 'Isabella',
-    lastName: 'Johnson',
-    email: 'isabella.johnson@yale.edu',
-    collegeId: 'IJ2024123',
-    year: 'Junior',
-    department: 'Psychology',
-    university: 'Yale University',
-    location: 'New Haven, CT',
-    skills: ['Research', 'Statistics', 'SPSS', 'Writing', 'Public Speaking'],
-    interests: ['Psychology', 'Research', 'Mental Health', 'Writing'],
-    projectAreas: ['Research', 'Academic Projects', 'Health Tech'],
-    bio: 'Psychology major focusing on cognitive behavioral research. Interested in mental health applications and therapeutic technologies.',
-    createdAt: new Date('2023-11-10'),
-    updatedAt: new Date('2024-01-10'),
-  },
-  {
-    id: '10',
-    firstName: 'James',
-    lastName: 'Kim',
-    email: 'james.kim@princeton.edu',
-    collegeId: 'JK2023067',
-    year: 'Senior',
-    department: 'Economics',
-    university: 'Princeton University',
-    location: 'Princeton, NJ',
-    skills: ['Economics', 'Data Analysis', 'Python', 'R', 'Financial Modeling'],
-    interests: ['Economics', 'Finance', 'Data Science', 'Policy'],
-    projectAreas: ['Data Science', 'Research', 'Academic Projects'],
-    bio: 'Economics student with strong analytical skills. Passionate about using data to understand economic trends and policy impacts.',
-    socialLinks: {
-      linkedin: 'jameskim'
-    },
-    createdAt: new Date('2023-09-05'),
-    updatedAt: new Date('2024-01-08'),
-  },
-  {
-    id: '11',
-    firstName: 'Zoe',
-    lastName: 'Davis',
-    email: 'zoe.davis@nyu.edu',
-    collegeId: 'ZD2025078',
-    year: 'Freshman',
-    department: 'Arts & Humanities',
-    university: 'NYU',
-    location: 'New York, NY',
-    skills: ['Creative Writing', 'Digital Media', 'Photography', 'Social Media'],
-    interests: ['Writing', 'Art', 'Photography', 'Film'],
-    projectAreas: ['Creative Projects', 'Digital Media', 'Storytelling'],
-    bio: 'Creative writing student passionate about digital storytelling. Working on multimedia projects that combine writing, photography, and video.',
-    socialLinks: {
-      portfolio: 'https://zoedavis.art',
-      instagram: 'zoe_creates'
-    },
-    createdAt: new Date('2024-01-03'),
-    updatedAt: new Date('2024-01-12'),
-  }
-];
 
-// Combine all profiles
-export const allMockProfiles = [...mockProfiles, ...additionalMockProfiles];
+// Function to get a user profile (useful for current user simulation)
+// You can modify this to pick 'suraj-yaligar' by default if needed for testing
+export const getMyProfile = (): UserProfile | null => {
+  // return mockProfiles.find(p => p.id === '1') || null; // Default to Priya
+  return mockProfiles.find(p => p.id === 'suraj-yaligar') || null; // Default to Suraj
+};
+
+
+// Combine all profiles - ensure no duplicates if you were to add 'additionalMockProfiles' back
+export const allMockProfiles = [...mockProfiles];
+// If you had additionalMockProfiles:
+// const uniqueProfileIds = new Set();
+// export const allMockProfiles = [...mockProfiles, ...additionalMockProfiles].filter(profile => {
+//   if (uniqueProfileIds.has(profile.id)) {
+//     return false;
+//   }
+//   uniqueProfileIds.add(profile.id);
+//   return true;
+// });
+
 
 // Function to get random profiles for suggestions
 export const getRandomProfiles = (count: number = 3, excludeId?: string): UserProfile[] => {
@@ -356,66 +270,46 @@ export const getRandomProfiles = (count: number = 3, excludeId?: string): UserPr
   return shuffled.slice(0, count);
 };
 
-// Function to search profiles
-export const searchProfiles = (query: string, filters?: any): UserProfile[] => {
+// Function to search profiles (can be enhanced)
+export const searchProfiles = (query: string, filters?: Partial<SearchFilters>): UserProfile[] => {
   let results = allMockProfiles;
 
-  // Text search
   if (query) {
     const searchTerm = query.toLowerCase();
-    results = results.filter(profile => 
+    results = results.filter(profile =>
       profile.firstName.toLowerCase().includes(searchTerm) ||
       profile.lastName.toLowerCase().includes(searchTerm) ||
       profile.department.toLowerCase().includes(searchTerm) ||
+      profile.university?.toLowerCase().includes(searchTerm) ||
       profile.skills.some(skill => skill.toLowerCase().includes(searchTerm)) ||
       profile.interests.some(interest => interest.toLowerCase().includes(searchTerm)) ||
       profile.bio?.toLowerCase().includes(searchTerm)
     );
   }
 
-  // Apply filters
+  // Apply filters (expand as needed)
   if (filters) {
     if (filters.departments?.length) {
-      results = results.filter(p => filters.departments.includes(p.department));
+      results = results.filter(p => filters.departments?.includes(p.department));
     }
-    if (filters.years?.length) {
-      results = results.filter(p => filters.years.includes(p.year));
-    }
-    if (filters.skills?.length) {
-      results = results.filter(p => 
-        filters.skills.some((skill: string) => p.skills.includes(skill))
-      );
-    }
-    if (filters.interests?.length) {
-      results = results.filter(p => 
-        filters.interests.some((interest: string) => p.interests.includes(interest))
-      );
-    }
+    // Add more filters for year, skills, interests, projectAreas etc.
   }
-
   return results;
 };
 
-// Mock recent activities for dashboard
-export const getRecentActivities = (userId: string): Activity[] => {
-  return mockActivities
-    .filter(activity => activity.userId === userId)
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    .slice(0, 5);
-};
 
-// Mock connection requests
-export const getPendingConnections = (userId: string): Connection[] => {
-  return mockConnections.filter(conn => 
-    (conn.userId === userId || conn.connectedUserId === userId) && 
-    conn.status === 'pending'
-  );
-};
+// Ensure avatar paths are correct or use fallbacks.
+// For example, create a folder public/avatars and add images like:
+// priya-sharma.jpg, rohan-patel.jpg, aisha-khan.jpg, vikram-singh.jpg, meera-nair.jpg, suraj-yaligar.jpg
+// If you don't have specific images, the AvatarFallback will be used.
+// You might want to update the UserActivity user objects if they reference old avatar paths.
 
-// Mock accepted connections
-export const getAcceptedConnections = (userId: string): Connection[] => {
-  return mockConnections.filter(conn => 
-    (conn.userId === userId || conn.connectedUserId === userId) && 
-    conn.status === 'accepted'
-  );
-}; 
+// For recentActivity in UserProfile, ensure the user objects (if any) also reflect new names/avatars.
+// Example:
+// recentActivity: [
+//   { id: 'act1-2', type: 'connection_made', description: 'Connected with Rohan Patel.', timestamp: '5d ago', user: {id: '2', name: 'Rohan Patel', avatar: '/avatars/rohan-patel.jpg'} },
+// ]
+// This was done for Priya Sharma connecting with Rohan Patel.
+
+// Update `getMyProfile` to return your profile ('suraj-yaligar') by default if that's what you want for testing purposes
+// This is already done in the code above. 

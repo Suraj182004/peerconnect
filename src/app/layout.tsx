@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-inter antialiased`}>
         <ConnectionsProvider>
-          {children}
+        {children}
           <Toaster richColors position="top-right" />
         </ConnectionsProvider>
       </body>

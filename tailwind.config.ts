@@ -64,7 +64,7 @@ export default {
 		animation: {
 			'fade-in': 'fadeIn 0.3s ease-out',
 			'slide-up': 'slideUp 0.3s ease-out',
-		}
+  		}
   	}
   },
   plugins: [require("tailwindcss-animate")],
