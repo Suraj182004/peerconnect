@@ -9,10 +9,11 @@ import { allMockProfiles } from '@/lib/mockData'; // To find any user
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardDescription, CardTitle } from '@/components/ui/card';
-import { Edit3, Mail, MapPin, Briefcase, Users, Link2, Linkedin, Github, Twitter, ExternalLink, ShieldAlert, UserPlus, UserCheck, Clock, Link as LinkIcon, Star, Users2, CalendarDays, Lightbulb, Palette, Award, Building, Globe, Code2, Calendar, ExternalLinkIcon, Target, Zap, School, Rocket, Share2, PlusCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Edit3, Mail, MapPin, Briefcase, Linkedin, Github, Twitter, ExternalLink, ShieldAlert, UserPlus, UserCheck, Clock, Link as LinkIcon, Star, Users2, Lightbulb, Palette, Award, Building, Globe, School, Rocket, PlusCircle, Loader2, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useConnections } from '@/hooks/useConnections';
+import AiAnalysisDialog from '@/components/dialogs/AiAnalysisDialog';
 
 const socialIconMap: { [key: string]: React.ElementType } = {
   linkedin: Linkedin,
@@ -22,19 +23,14 @@ const socialIconMap: { [key: string]: React.ElementType } = {
   default: LinkIcon, 
 };
 
-interface DynamicProfilePageProps {
-  params: {
-    userId: string;
-  };
-}
-
-const DynamicUserProfilePage = ({ params: paramsAsProp }: DynamicProfilePageProps) => {
-  const actualParams = React.use(paramsAsProp as any);
-  const { userId } = actualParams || {}; // Fallback if actualParams is null/undefined
+const DynamicUserProfilePage = () => {
+  const params = useParams();
+  const userId = params?.userId as string;
   
   const router = useRouter();
   const [profileToShow, setProfileToShow] = useState<UserProfile | null | undefined>(undefined);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+  const [isAiAnalysisDialogOpen, setIsAiAnalysisDialogOpen] = useState(false);
 
   const { 
     getConnectionStatus,
@@ -94,7 +90,7 @@ const DynamicUserProfilePage = ({ params: paramsAsProp }: DynamicProfilePageProp
         <ShieldAlert className="mx-auto h-20 w-20 text-destructive/70 mb-5" />
         <h1 className="text-3xl font-bold text-foreground">Profile Not Found</h1>
         <p className="mt-3 text-base text-muted-foreground">
-          Sorry, we couldn't find the profile you were looking for. It might have been removed or the link is incorrect.
+          Sorry, we couldn&apos;t find the profile you were looking for. It might have been removed or the link is incorrect.
         </p>
         <Button onClick={() => router.push('/dashboard/browse')} className="mt-8 text-base px-6 py-3">
           Browse Students
@@ -168,52 +164,89 @@ const DynamicUserProfilePage = ({ params: paramsAsProp }: DynamicProfilePageProp
       animate="visible"
       className="max-w-6xl mx-auto px-2 sm:px-4 lg:px-6 py-6 md:py-8 space-y-6 md:space-y-8"
     >
-      {/* Profile Header */}
+      {/* Profile Header - Updated to match image */}
       <motion.div variants={defaultVariants} custom={0}>
-        <Card className="overflow-hidden shadow-2xl border-border/50 rounded-xl bg-gradient-to-br from-card via-card to-muted/40">
-          <div className="h-44 md:h-56 bg-gradient-to-r from-primary/70 via-accent/70 to-pink-500/60 relative group">
-            {/* Optional: Decorative elements or pattern can go here */}
-            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
+        <Card className="overflow-hidden shadow-2xl border-border/50 rounded-xl bg-card">
+          {/* Gradient Banner */}
+          <div className="h-48 md:h-60 bg-gradient-to-r from-primary/80 via-accent/80 to-pink-600/70 relative group cursor-pointer transition-all duration-300 hover:from-primary/90 hover:via-accent/90 hover:to-pink-600/80">
+            <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-all duration-300"></div>
+            {/* Optional: Subtle pattern or texture can be added here if desired */}
           </div>
-          <div className="p-5 sm:p-6 bg-card/80 backdrop-blur-sm relative">
-            {/* Main flex container for avatar, text, and button */}
-            <div className="flex flex-col sm:flex-row items-center sm:items-center gap-x-5 gap-y-4 -mt-24 sm:-mt-28 relative z-10">
-              <motion.div initial={{scale:0.5, opacity:0}} animate={{scale:1, opacity:1}} transition={{delay:0.1, duration:0.4, type: "spring", stiffness:120}} className="shrink-0">
-                <Avatar className="w-36 h-36 md:w-40 md:h-40 rounded-full border-[6px] border-card bg-muted shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer">
+
+          {/* Content below banner */}
+          <div className="p-5 sm:p-6 relative">
+            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-x-5 gap-y-4 -mt-28 sm:-mt-32 relative z-10">
+              {/* Avatar - Larger and overlapping */}
+              <motion.div 
+                initial={{scale:0.5, opacity:0}} 
+                animate={{scale:1, opacity:1}} 
+                transition={{delay:0.1, duration:0.4, type: "spring", stiffness:120}} 
+                className="shrink-0 group/avatar"
+              >
+                <Avatar className="w-40 h-40 md:w-44 md:h-44 rounded-full border-[6px] border-card bg-muted shadow-2xl transition-all duration-300 group-hover/avatar:scale-105 group-hover/avatar:shadow-primary/30 cursor-pointer">
                   <AvatarImage src={user.avatar} alt={`${user.firstName} ${user.lastName}`} />
-                  <AvatarFallback className="text-5xl md:text-6xl font-semibold bg-gradient-to-br from-primary/20 to-accent/20 text-primary">
+                  <AvatarFallback className="text-6xl md:text-7xl font-semibold bg-gradient-to-br from-primary/20 to-accent/20 text-primary group-hover/avatar:text-primary/90 transition-colors">
                     {user.firstName[0]}{user.lastName[0]}
                   </AvatarFallback>
                 </Avatar>
               </motion.div>
               
-              {/* Text info block - increased sm:mx-5 for horizontal padding */}
-              <div className="flex-1 text-center sm:text-left mt-2 sm:mt-0 sm:mx-5 min-w-0">
-                <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight truncate" title={`${user.firstName} ${user.lastName}`}>
+              {/* Text info block */}
+              <div className="flex-1 text-center sm:text-left mt-3 sm:mt-0 sm:pb-2 min-w-0 group">
+                <h1 
+                    className="text-3xl md:text-4xl font-bold text-foreground tracking-tight truncate group-hover:text-primary transition-colors duration-300 cursor-default" 
+                    title={`${user.firstName} ${user.lastName}`}
+                >
                   {user.firstName} {user.lastName}
                 </h1>
-                <p className="text-accent-foreground font-semibold text-base md:text-lg mt-0.5 truncate">
+                <p className="text-base text-primary/90 font-medium mt-0.5 truncate group-hover:text-primary transition-colors duration-300 cursor-default">
                   {user.department} &bull; {user.year}
                 </p>
-                {user.university && <p className="text-sm text-muted-foreground/90 flex items-center justify-center sm:justify-start mt-1.5 truncate">
-                  <Briefcase className="w-4 h-4 mr-2 text-muted-foreground/70 shrink-0" /> {user.university}
-                  </p>}
-                  <p className="text-xs text-muted-foreground/70 mt-2">Member since {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+                {user.university && (
+                  <p className="text-sm text-muted-foreground/90 flex items-center justify-center sm:justify-start mt-1.5 truncate cursor-default">
+                    <School className="w-4 h-4 mr-1.5 text-muted-foreground/70 shrink-0" /> {user.university}
+                  </p>
+                )}
+                <p className="text-xs text-muted-foreground/80 mt-1.5 cursor-default">
+                    Member since {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                </p>
               </div>
 
-              {/* Action button block */}
-              <div className="shrink-0 flex flex-col items-center gap-2.5 w-full sm:w-auto sm:ml-auto">
+              {/* Action button block - Aligned to the right */}
+              <div className="shrink-0 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto sm:ml-auto sm:self-end sm:pb-2">
                 {isCurrentUserProfile ? (
-                  <Button variant="outline" size="sm" onClick={() => router.push('/onboarding')} 
-                          className="shadow-md hover:shadow-lg transition-all duration-300 border-border/80 hover:border-primary/60 bg-card/80 backdrop-blur-sm w-full sm:w-auto group-hover:scale-105">
-                    <Edit3 className="w-4 h-4 mr-2 text-primary/90" /> Edit My Profile
-                  </Button>
-                ) : getConnectButton()} 
+                  <>
+                    <Button variant="outline" size="sm" onClick={() => router.push('/onboarding')} 
+                            className="shadow-md hover:shadow-lg transition-all duration-300 border-border/80 hover:border-primary/60 bg-card/90 backdrop-blur-sm w-full sm:w-auto group/button hover:scale-105">
+                      <Edit3 className="w-4 h-4 mr-2 text-primary/90 group-hover/button:text-primary transition-colors" /> Edit My Profile
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => router.push('/dashboard/profile/add-project')}
+                            className="shadow-md hover:shadow-lg transition-all duration-300 border-border/80 hover:border-primary/60 bg-card/90 backdrop-blur-sm w-full sm:w-auto group/button hover:scale-105">
+                        <PlusCircle className="w-4 h-4 mr-2 text-primary/90 group-hover/button:text-primary transition-colors"/> Add Project
+                    </Button>
+                  </>
+                ) : (
+                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    {getConnectButton()} 
+                    <Button variant="outline" size="sm" onClick={() => setIsAiAnalysisDialogOpen(true)} 
+                            className="shadow-md hover:shadow-lg transition-all duration-300 border-purple-500/50 hover:border-purple-500/80 bg-card/90 backdrop-blur-sm w-full sm:w-auto group/button hover:scale-105 text-purple-600 hover:text-purple-700">
+                        <Sparkles className="w-4 h-4 mr-2 text-purple-500/90 group-hover/button:text-purple-600 transition-colors"/> AI Match Analysis
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </Card>
       </motion.div>
+
+      {/* AI Analysis Dialog */}
+      <AiAnalysisDialog 
+        isOpen={isAiAnalysisDialogOpen}
+        onClose={() => setIsAiAnalysisDialogOpen(false)}
+        currentUserProfile={currentUser}
+        viewedUserProfile={profileToShow}
+      />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
@@ -313,14 +346,14 @@ const DynamicUserProfilePage = ({ params: paramsAsProp }: DynamicProfilePageProp
                     )}
                     <div className="flex items-center gap-3 mt-3 pt-2 border-t border-border/50">
                         {proj.url && 
-                            <Button variant="outline" size="xs" asChild className="text-xs">
+                            <Button variant="outline" size="sm" asChild>
                                 <Link href={proj.url} target="_blank" rel="noopener noreferrer">
                                     <Globe className="w-3 h-3 mr-1.5"/> Live Demo
                                 </Link>
                             </Button>
                         }
                         {proj.repoUrl && 
-                            <Button variant="outline" size="xs" asChild className="text-xs">
+                            <Button variant="outline" size="sm" asChild>
                                 <Link href={proj.repoUrl} target="_blank" rel="noopener noreferrer">
                                     <Github className="w-3 h-3 mr-1.5"/> Source Code
                                 </Link>
@@ -406,12 +439,5 @@ const DynamicUserProfilePage = ({ params: paramsAsProp }: DynamicProfilePageProp
     </motion.div>
   );
 };
-
-// Adding Loader2 component directly if not globally available or for simplicity
-const Loader2: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-  </svg>
-);
 
 export default DynamicUserProfilePage; 

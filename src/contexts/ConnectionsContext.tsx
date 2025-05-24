@@ -3,7 +3,7 @@
 import React, { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
-import { Connection, ConnectionRequest, ConnectionStatus, UserProfile } from '@/lib/types';
+import { Connection, ConnectionRequest, ConnectionStatus } from '@/lib/types';
 import localStorageManager from '@/lib/localStorage';
 
 interface ConnectionsContextType {
@@ -13,6 +13,8 @@ interface ConnectionsContextType {
   sendConnectionRequest: (targetUserId: string, currentUserId: string) => Promise<void>;
   acceptConnectionRequest: (requestId: string) => Promise<void>;
   declineConnectionRequest: (requestId: string) => Promise<void>;
+  removeConnection: (connectionId: string) => Promise<void>;
+  cancelSentRequest: (requestId: string) => Promise<void>;
   getConnectionStatus: (targetUserId: string, currentUserId: string) => ConnectionStatus | 'none';
   isLoading: boolean;
   getConnectionsByUserId: (userId: string) => Connection[];
@@ -70,8 +72,17 @@ export const ConnectionsProvider: React.FC<ConnectionsProviderProps> = ({ childr
     );
     if (hasPendingRequest) return 'pending';
     
+    // Check if there is a received request from the target user
+    const hasReceivedRequest = receivedRequests.some(
+      (req) => 
+        req.senderId === targetUserId &&
+        req.receiverId === currentUserId &&
+        req.status === 'pending'
+    );
+    if (hasReceivedRequest) return 'pending'; // Treat as pending from our perspective to show "Accept/Decline"
+
     return 'none';
-  }, [connections, sentRequests]);
+  }, [connections, sentRequests, receivedRequests]);
 
   const sendConnectionRequest = useCallback(async (targetUserId: string, currentUserId: string) => {
     if (!currentUserId) {
@@ -80,8 +91,12 @@ export const ConnectionsProvider: React.FC<ConnectionsProviderProps> = ({ childr
     }
     
     const existingStatus = getConnectionStatus(targetUserId, currentUserId);
-    if (existingStatus !== 'none') {
-      toast.info(`Connection status is already '${existingStatus}'.`);
+    if (existingStatus === 'accepted') {
+      toast.info(`You are already connected with this user.`);
+      return;
+    }
+    if (existingStatus === 'pending') {
+      toast.info(`A connection request is already pending or received from this user.`);
       return;
     }
 
@@ -96,8 +111,16 @@ export const ConnectionsProvider: React.FC<ConnectionsProviderProps> = ({ childr
       createdAt: new Date(), 
     };
 
+    // Add to sent requests
     const updatedSentRequests = [...sentRequests, newRequest];
     internalSaveSentRequests(updatedSentRequests);
+
+    // Simulate sending to the other user (add to their received requests)
+    // In a real backend, the server would handle this.
+    // For now, we'll simulate by trying to update the global mock data if possible or just toast.
+    // This part is tricky in a pure frontend setup without a central store for all users' received requests.
+    // For this simulation, we assume the target user will see it if they fetch their received requests.
+    // We also simulate auto-acceptance to simplify the flow for now.
 
     await new Promise(resolve => setTimeout(resolve, 1200)); // Simulate API call
 
@@ -117,7 +140,7 @@ export const ConnectionsProvider: React.FC<ConnectionsProviderProps> = ({ childr
     internalSaveConnections(updatedConnections);
     
     setIsLoading(false);
-    toast.success('Connection request accepted!', { id: toastId });
+    toast.success('Connection request accepted! (Simulated auto-accept)', { id: toastId });
   }, [connections, sentRequests, internalSaveConnections, internalSaveSentRequests, getConnectionStatus]);
 
   const acceptConnectionRequest = useCallback(async (requestId: string) => {
@@ -131,10 +154,8 @@ export const ConnectionsProvider: React.FC<ConnectionsProviderProps> = ({ childr
       return;
     }
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
 
-    // Create new connection
     const newConnection: Connection = {
       id: uuidv4(),
       userId1: requestToAccept.senderId,
@@ -143,8 +164,6 @@ export const ConnectionsProvider: React.FC<ConnectionsProviderProps> = ({ childr
       createdAt: new Date(),
     };
     internalSaveConnections([...connections, newConnection]);
-
-    // Remove from received requests
     internalSaveReceivedRequests(receivedRequests.filter(req => req.id !== requestId));
 
     setIsLoading(false);
@@ -154,16 +173,39 @@ export const ConnectionsProvider: React.FC<ConnectionsProviderProps> = ({ childr
   const declineConnectionRequest = useCallback(async (requestId: string) => {
     setIsLoading(true);
     const toastId = toast.loading('Declining connection request...');
-
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 700));
-    
-    // Remove from received requests
+    await new Promise(resolve => setTimeout(resolve, 700)); // Simulate API call
     internalSaveReceivedRequests(receivedRequests.filter(req => req.id !== requestId));
-    
     setIsLoading(false);
     toast.success('Connection declined.', { id: toastId });
   }, [receivedRequests, internalSaveReceivedRequests]);
+
+  const removeConnection = useCallback(async (connectionId: string) => {
+    setIsLoading(true);
+    const toastId = toast.loading('Removing connection...');
+    await new Promise(resolve => setTimeout(resolve, 800)); // Simulate API call
+    
+    const success = localStorageManager.removeConnection(connectionId); // Use the existing LS manager function
+    if (success) {
+      setConnections(prevConns => prevConns.filter(conn => conn.id !== connectionId));
+      toast.success('Connection removed.', { id: toastId });
+    } else {
+      toast.error('Failed to remove connection.', { id: toastId });
+    }
+    setIsLoading(false);
+  }, [internalSaveConnections]); // internalSaveConnections might not be needed if LS manager handles it and we re-fetch or filter state.
+                                 // For now, explicitly setting state after LS call.
+
+  const cancelSentRequest = useCallback(async (requestId: string) => {
+    setIsLoading(true);
+    const toastId = toast.loading('Cancelling request...');
+    await new Promise(resolve => setTimeout(resolve, 700)); // Simulate API call
+
+    const updatedSentRequests = sentRequests.filter(req => req.id !== requestId);
+    internalSaveSentRequests(updatedSentRequests);
+
+    setIsLoading(false);
+    toast.success('Request cancelled.', { id: toastId });
+  }, [sentRequests, internalSaveSentRequests]);
   
   const getConnectionsByUserId = useCallback((userId: string): Connection[] => {
     return connections.filter(conn => (conn.userId1 === userId || conn.userId2 === userId) && conn.status === 'accepted');
@@ -177,6 +219,8 @@ export const ConnectionsProvider: React.FC<ConnectionsProviderProps> = ({ childr
       sendConnectionRequest, 
       acceptConnectionRequest,
       declineConnectionRequest,
+      removeConnection,
+      cancelSentRequest,
       getConnectionStatus, 
       isLoading,
       getConnectionsByUserId

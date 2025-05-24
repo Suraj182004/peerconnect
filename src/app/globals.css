@@ -94,6 +94,7 @@
   
   html {
     scroll-behavior: smooth;
+    /* cursor: none; */ /* Removed global cursor:none */
   }
 }
 
@@ -132,6 +133,31 @@
   .text-balance {
     text-wrap: balance;
   }
+  
+  .animated-gradient-text {
+    background-image: linear-gradient(
+      -45deg,
+      theme(colors.primary.DEFAULT / 100%),
+      theme(colors.accent.DEFAULT / 100%),
+      theme(colors.pink.500 / 100%),
+      theme(colors.accent.DEFAULT / 100%),
+      theme(colors.primary.DEFAULT / 100%)
+    );
+    background-size: 300% 300%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: moveGradient 10s ease-in-out infinite alternate;
+  }
+
+  @keyframes moveGradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 100% 50%;
+    }
+  }
 }
 
 @keyframes fadeIn {
@@ -167,4 +193,78 @@
 
 .animate-gradient-xy {
   animation: gradient-xy 15s ease infinite;
+}
+
+/* New animations for CTA background elements */
+@keyframes pulse-bg-1 {
+  0%, 100% {
+    transform: translate(-10%, -10%) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(10%, 10%) scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse-bg-1 {
+  animation: pulse-bg-1 20s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-bg-2 {
+  0%, 100% {
+    transform: translate(10%, 10%) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-10%, -10%) scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse-bg-2 {
+  animation: pulse-bg-2 25s ease-in-out infinite alternate;
+}
+
+/* Custom Cursor Styles - Scoped to .landing-cursor-active */
+.landing-cursor-active .custom-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  pointer-events: none; /* Allows clicking through the cursor */
+  z-index: 9999;
+  mix-blend-mode: difference; /* Example blend mode */
+  transition: transform 0.1s ease-out, width 0.2s ease-out, height 0.2s ease-out, background-color 0.2s ease-out;
+  will-change: transform, width, height;
+}
+
+.landing-cursor-active .custom-cursor .cursor-dot {
+  width: 10px;
+  height: 10px;
+  background-color: white; /* Contrasting color for difference blend mode */
+  border-radius: 50%;
+  transform: translate(-50%, -50%); /* Center the dot */
+}
+
+/* Refined hover effect for cursor on specific interactive elements - Scoped */
+.landing-cursor-active body:has(a:hover, button:hover) .custom-cursor .cursor-dot,
+.landing-cursor-active .custom-cursor.interactive-hover .cursor-dot {
+  transform: translate(-50%, -50%) scale(3.5); /* Larger scale */
+  background-color: hsl(var(--primary)); /* Solid primary color */
+  mix-blend-mode: normal; /* Switch off blend mode for better visibility of primary color */
+  opacity: 0.7;
+}
+
+/* Style for when the cursor is "active" or "pressed" - Scoped */
+.landing-cursor-active body:has(a:active, button:active) .custom-cursor .cursor-dot,
+.landing-cursor-active .custom-cursor.active-state .cursor-dot {
+  transform: translate(-50%, -50%) scale(2.8);
+  background-color: hsl(var(--primary-foreground));
+  border: 2px solid hsl(var(--primary));
+  mix-blend-mode: normal;
+}
+
+/* Ensure default cursor for specific elements if needed - This can remain global or also be scoped if necessary */
+input, textarea, select {
+  cursor: auto;
 }

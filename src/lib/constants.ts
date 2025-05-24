@@ -1,3 +1,5 @@
+import { INDIAN_COLLEGES as AllIndianColleges } from './indianColleges'; // Import the list
+
 // App Configuration
 export const APP_CONFIG = {
   name: 'PeerConnect',
@@ -384,4 +386,7 @@ export const PROJECT_AREAS = [
   'Academic Projects',
   'Hackathons',
   'Competitions',
-] as const; 
+] as const;
+
+// Re-export the imported list
+export const INDIAN_COLLEGES = AllIndianColleges; 

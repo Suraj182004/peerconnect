@@ -18,7 +18,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { OnboardingFormData, UserProfile, ACADEMIC_YEARS, DEPARTMENTS, POPULAR_SKILLS, INTERESTS } from '@/lib/types';
 import { setUserProfile, setOnboardingStatus } from '@/lib/localStorage';
-import { APP_CONFIG, VALIDATION_RULES, UNIVERSITIES, PROJECT_AREAS, SOCIAL_PLATFORMS } from '@/lib/constants';
+import { APP_CONFIG, VALIDATION_RULES, INDIAN_COLLEGES, PROJECT_AREAS, SOCIAL_PLATFORMS } from '@/lib/constants';
 import { v4 as uuidv4 } from 'uuid';
 
 // Validation schemas for each step
@@ -289,7 +289,9 @@ const OnboardingPage = () => {
                                   <SelectValue placeholder="Select your university" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {UNIVERSITIES.map(uni => <SelectItem key={uni} value={uni}>{uni}</SelectItem>)}
+                                  {INDIAN_COLLEGES.map((uni) => (
+                                    <SelectItem key={uni} value={uni}>{uni}</SelectItem>
+                                  ))}
                                 </SelectContent>
                               </Select>
                             )}

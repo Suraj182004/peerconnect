@@ -13,6 +13,7 @@ import {
   Users, UserCheck, UserPlus, Clock, ArrowRight, 
   Edit3, Eye, Briefcase,
   Settings, BarChart2, MessageSquare, FileText, Users2,
+  PlusCircle, Search,
 } from 'lucide-react';
 import { UserProfile, QuickAction } from '@/lib/types';
 import { mockProfiles, mockDashboardStats, getRandomProfiles } from '@/lib/mockData';
@@ -121,13 +122,15 @@ const DashboardHomePage = () => {
           </div>
           <CardContent className="p-5 sm:p-6 relative">
             <div className="flex flex-col sm:flex-row items-center sm:items-center gap-x-5 gap-y-3 -mt-20 sm:-mt-24 relative z-10">
-              <Avatar className="w-32 h-32 sm:w-36 sm:h-36 border-[5px] border-card bg-muted rounded-full shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer">
-                <AvatarImage src={currentUser.avatar} alt={`${currentUser.firstName} ${currentUser.lastName}`} />
-                <AvatarFallback className="text-5xl font-semibold bg-gradient-to-br from-primary/20 to-accent/20 text-primary">
-                  {currentUser.firstName[0]}{currentUser.lastName[0]}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 text-center sm:text-left sm:ml-6 mt-0">
+              <motion.div whileHover={{ scale: 1.03, rotate: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 10 }}>
+                <Avatar className="w-32 h-32 sm:w-36 sm:h-36 border-[5px] border-card bg-muted rounded-full shadow-2xl transition-all duration-300 cursor-pointer">
+                  <AvatarImage src={currentUser.avatar} alt={`${currentUser.firstName} ${currentUser.lastName}`} />
+                  <AvatarFallback className="text-5xl font-semibold bg-gradient-to-br from-primary/20 to-accent/20 text-primary">
+                    {currentUser.firstName[0]}{currentUser.lastName[0]}
+                  </AvatarFallback>
+                </Avatar>
+              </motion.div>
+              <motion.div className="flex-1 text-center sm:text-left sm:ml-6 mt-0" whileHover={{x:2}}>
                 <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
                   {currentUser.firstName} {currentUser.lastName}
                 </h1>
@@ -137,7 +140,7 @@ const DashboardHomePage = () => {
                 <p className="text-xs text-muted-foreground mt-1.5">
                   {currentUser.university} &bull; {mockDashboardStats.totalConnections} connections &bull; Member since {new Date(currentUser.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric'})}
                 </p>
-              </div>
+              </motion.div>
               <Button
                 variant="outline"
                 size="sm"
@@ -225,11 +228,17 @@ const DashboardHomePage = () => {
                 ].map((stat, idx) => {
                     const StatIcon = stat.icon;
                     return (
-                    <motion.div key={stat.title} variants={defaultVariants} custom={idx + 3}> 
-                        <Card className="shadow-md border-border/70 hover:shadow-lg transition-shadow duration-200">
+                    <motion.div 
+                        key={stat.title} 
+                        variants={defaultVariants} 
+                        custom={idx + 3}
+                        whileHover={{ y: -4, boxShadow: "0px 10px 20px rgba(var(--color-primary-rgb), 0.1)" }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 15}}
+                    > 
+                        <Card className="shadow-md border-border/70 overflow-hidden group">
                         <CardContent className="p-4 flex items-center gap-4">
-                            <div className="p-3 bg-primary/10 rounded-lg">
-                                <StatIcon className="w-6 h-6 text-primary" />
+                            <div className="p-3 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg transition-all duration-300 group-hover:from-primary/20 group-hover:to-accent/20 group-hover:shadow-lg">
+                                <StatIcon className="w-6 h-6 text-primary transition-transform duration-300 group-hover:scale-110" />
                             </div>
                             <div>
                                 <p className="text-2xl sm:text-3xl font-bold text-foreground">{stat.value}</p>
@@ -259,7 +268,14 @@ const DashboardHomePage = () => {
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground leading-relaxed">
                 {currentUser.bio || 
-                  <p className="italic">No bio available. Complete your profile to share more about yourself!</p>
+                  <div className="text-center py-8">
+                    <Users2 className="w-12 h-12 mx-auto mb-3 text-primary/40" />
+                    <p className="font-semibold text-base text-foreground">Tell us about yourself!</p>
+                    <p className="text-sm mb-4">Your bio is a great way for others to get to know you. Add a few lines about your interests, goals, or anything else you&apos;d like to share.</p>
+                    <Button size="sm" variant="outline" onClick={() => router.push(`/dashboard/profile/${currentUser.id}`)}>
+                        <Edit3 className="w-3.5 h-3.5 mr-1.5" /> Complete Your Profile
+                    </Button>
+                  </div>
                 }
               </CardContent>
             </Card>
@@ -301,9 +317,17 @@ const DashboardHomePage = () => {
                   </motion.div>
                 )) : (
                     <div className="text-center py-8 text-muted-foreground">
-                        <Users2 className="w-12 h-12 mx-auto mb-3 text-primary/40" />
-                        <p className="font-semibold text-base">No recent activity.</p>
-                        <p className="text-sm">Start connecting or join a project to see updates here!</p>
+                        <MessageSquare className="w-12 h-12 mx-auto mb-3 text-primary/40" />
+                        <p className="font-semibold text-base text-foreground">No recent activity to show.</p>
+                        <p className="text-sm mb-4">Start connecting with peers, join projects, or update your profile to see your activity here.</p>
+                        <div className="flex gap-3 justify-center">
+                            <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/browse')}>
+                                <Search className="w-3.5 h-3.5 mr-1.5" /> Browse Students
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => router.push(`/dashboard/profile/${currentUser.id}`)}>
+                                <Edit3 className="w-3.5 h-3.5 mr-1.5" /> Update Profile
+                            </Button>
+                        </div>
                     </div>
                 )}
               </CardContent>
@@ -319,11 +343,16 @@ const DashboardHomePage = () => {
               <CardContent>
                 <div className="text-center py-8 text-muted-foreground">
                     <Briefcase className="w-12 h-12 mx-auto mb-3 text-primary/40" />
-                    <p className="font-semibold text-base">No experience listed yet.</p>
-                    <p className="text-sm">Add your projects and experiences to your profile.</p>
-                    <Button size="sm" variant="outline" className="mt-4" onClick={() => router.push(`/dashboard/profile/${currentUser.id}`)}>
-                        <Edit3 className="w-3.5 h-3.5 mr-1.5" /> Update Profile
-                    </Button>
+                    <p className="font-semibold text-base text-foreground">Showcase your journey!</p>
+                    <p className="text-sm mb-4">Adding your experiences and projects helps others understand your skills and background. </p>
+                    <div className="flex gap-3 justify-center">
+                        <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/profile/add-experience')}>
+                            <PlusCircle className="w-3.5 h-3.5 mr-1.5" /> Add Experience
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/profile/add-project')}>
+                             <PlusCircle className="w-3.5 h-3.5 mr-1.5" /> Add Project
+                        </Button>
+                    </div>
                 </div>
               </CardContent>
             </Card>
@@ -335,33 +364,40 @@ const DashboardHomePage = () => {
         <h2 className="text-lg font-semibold text-foreground tracking-tight px-1">Suggested For You</h2>
         {suggestedUsers.length > 0 ? (
           <div className="space-y-4">
-            {suggestedUsers.map((user, idx) => (
+            {suggestedUsers.map((user, idx) => {
+              const status = getConnectionStatus(user.id, currentUser?.id || '');
+              const connectButtonVariant = status === 'pending' || status === 'accepted' ? 'outline' : 'default';
+              const connectButtonTextColor = status === 'pending' || status === 'accepted' ? 'text-muted-foreground' : 'text-primary-foreground';
+
+              return (
               <motion.div key={user.id} variants={defaultVariants} custom={idx + 6}>
-                <Card className="p-4 shadow-md hover:shadow-lg transition-shadow duration-200 border-border/70">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="w-12 h-12 border bg-background">
-                      <AvatarImage src={user.avatar} alt={user.firstName} />
-                      <AvatarFallback>{user.firstName[0]}{user.lastName[0]}</AvatarFallback>
-                    </Avatar>
+                <Card className="p-4 shadow-md hover:shadow-lg transition-all duration-300 border-border/70 rounded-xl group hover:border-primary/50 transform hover:-translate-y-0.5">
+                  <div className="flex items-center gap-4">
+                    <Link href={`/dashboard/profile/${user.id}`} className="shrink-0">
+                        <Avatar className="w-14 h-14 border-2 border-transparent group-hover:border-primary/60 transition-all duration-300">
+                        <AvatarImage src={user.avatar} alt={user.firstName} />
+                        <AvatarFallback className="text-lg bg-muted group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300">{user.firstName[0]}{user.lastName[0]}</AvatarFallback>
+                        </Avatar>
+                    </Link>
                     <div className="flex-1 min-w-0">
-                      <Link href={`/dashboard/profile/${user.id}`} className="hover:underline">
-                        <p className="text-sm font-semibold text-foreground truncate">{user.firstName} {user.lastName}</p>
+                      <Link href={`/dashboard/profile/${user.id}`} className="group/userlink">
+                        <p className="text-sm font-semibold text-foreground truncate group-hover/userlink:text-primary group-hover/userlink:underline transition-colors duration-200">{user.firstName} {user.lastName}</p>
                       </Link>
-                      <p className="text-xs text-muted-foreground truncate">{user.department}</p>
+                      <p className="text-xs text-muted-foreground truncate">{user.department} &bull; {user.year}</p>
                     </div>
                     <Button 
                       size="sm" 
-                      variant={getConnectionStatus(user.id, currentUser?.id || '') === 'pending' || getConnectionStatus(user.id, currentUser?.id || '') === 'accepted' ? 'outline' : 'default'}
+                      variant={connectButtonVariant}
                       onClick={() => !isConnectButtonDisabled(user.id) && sendConnectionRequest(user.id, currentUser.id)}
                       disabled={isConnectButtonDisabled(user.id)}
-                      className="text-xs px-2.5 py-1 h-auto whitespace-nowrap shrink-0 shadow-sm hover:shadow-md transition-shadow"
+                      className={`text-xs px-3 py-1.5 h-auto whitespace-nowrap shrink-0 shadow-sm hover:shadow-md transition-all duration-200 rounded-md ${connectButtonTextColor} ${status === 'accepted' ? 'bg-green-500/10 border-green-500/30 hover:bg-green-500/20' : status === 'pending' ? 'bg-amber-500/10 border-amber-500/30 hover:bg-amber-500/20' : 'hover:bg-primary/90'}`}
                     >
                       {getConnectButtonContent(user.id)}
                     </Button>
                   </div>
                 </Card>
               </motion.div>
-            ))}
+            )})}
           </div>
         ) : (
             <div className="text-center py-8 text-muted-foreground bg-card rounded-lg shadow-sm border border-border/70">

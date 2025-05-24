@@ -38,6 +38,8 @@ export const StudentCard = ({
     cancelSentRequest,
     removeConnection,
     isLoading: connectionsLoading,
+    sentRequests,
+    connections
   } = useConnections();
 
   useEffect(() => {
@@ -64,15 +66,19 @@ export const StudentCard = ({
   };
   
   const handleCancelSent = async () => {
-    if (currentUserId) {
-        const reqId = useConnections().sentRequests.find(r => r.receiverId === profile.id && r.senderId === currentUserId)?.id;
-        if (reqId) await cancelSentRequest(reqId);
+    if (currentUserId && sentRequests) {
+        const reqId = sentRequests.find(r => r.receiverId === profile.id && r.senderId === currentUserId)?.id;
+        if (reqId && cancelSentRequest) await cancelSentRequest(reqId);
     }
   };
 
   const handleRemoveConnection = async () => {
-    if (currentUserId) {
-        const conn = useConnections().connections.find(c => (c.userId1 === currentUserId && c.userId2 === profile.id) || (c.userId1 === profile.id && c.userId2 === currentUserId));
+    if (currentUserId && connections) {
+        const conn = connections.find(c => 
+            c.status === 'accepted' &&
+            ((c.userId1 === currentUserId && c.userId2 === profile.id) || 
+             (c.userId1 === profile.id && c.userId2 === currentUserId))
+        );
         if(conn) await removeConnection(conn.id);
     }
   };

@@ -1,3 +1,5 @@
+import { INDIAN_COLLEGES } from "./constants"; // Import the constant array
+
 // Core User Types
 export interface UserProfile {
   id: string;
@@ -101,7 +103,7 @@ export interface Step1Data {
 }
 
 export interface Step2Data {
-  university: string;
+  university: typeof INDIAN_COLLEGES[number];
   collegeId: string;
   year: string;
   department: string;

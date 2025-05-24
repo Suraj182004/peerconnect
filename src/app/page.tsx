@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Users, Zap, Shield, Globe, Sparkles, ArrowRight, MessageSquare, SearchCode, GraduationCap, UserCircle2, Search, Users2, Code2, Lightbulb, Rocket, UserPlus, Handshake } from 'lucide-react';
+import { Zap, Shield, Sparkles, ArrowRight, Search, Users2, Code2, Lightbulb, Rocket, UserPlus, Handshake, Quote } from 'lucide-react';
 import { getUserProfile, getOnboardingStatus } from '@/lib/localStorage';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +14,19 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 export default function HomePage() {
   const router = useRouter();
 
+  // Ref for the "How it Works" section
+  const howItWorksRef = useRef(null);
+  const { scrollYProgress: howItWorksScrollYProgress } = useScroll({
+    target: howItWorksRef,
+    offset: ["start end", "center center"] // Start when section top hits viewport bottom, end when section center hits viewport center
+  });
+  // Transform scroll progress (0 to 1) to pathLength (0 to 1)
+  const pathLength = useTransform(howItWorksScrollYProgress, [0, 0.7], [0, 1]); // Draw line as section scrolls halfway
+
   useEffect(() => {
+    // Add class to body for landing page specific cursor styles
+    document.body.classList.add('landing-cursor-active');
+
     // Check if user exists and has completed onboarding
     const user = getUserProfile();
     const hasCompletedOnboarding = getOnboardingStatus();
@@ -22,43 +34,116 @@ export default function HomePage() {
     if (user && hasCompletedOnboarding) {
       router.replace('/dashboard');
     }
+
+    // Custom cursor logic
+    const cursorElement = document.createElement('div');
+    cursorElement.classList.add('custom-cursor');
+    const cursorDot = document.createElement('div');
+    cursorDot.classList.add('cursor-dot');
+    cursorElement.appendChild(cursorDot);
+    document.body.appendChild(cursorElement);
+
+    const onMouseMove = (e: MouseEvent) => {
+      cursorElement.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+    };
+
+    // Parallax elements for CTA
+    const parallaxBg1 = document.querySelector('.animate-pulse-bg-1') as HTMLElement;
+    const parallaxBg2 = document.querySelector('.animate-pulse-bg-2') as HTMLElement;
+
+    const onScroll = () => {
+      const scrollY = window.scrollY;
+      if (parallaxBg1) {
+        // Slower movement for bg1 (appears further away)
+        parallaxBg1.style.transform = `translateY(${scrollY * 0.1}px) translate(-10%, -10%) scale(1)`; 
+      }
+      if (parallaxBg2) {
+        // Slightly faster movement for bg2 (appears closer)
+        parallaxBg2.style.transform = `translateY(${scrollY * 0.2}px) translate(10%, 10%) scale(1)`; 
+      }
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Initial call to set position if already scrolled
+    onScroll();
+
+    // Cursor interaction enhancements
+    const interactiveElements = document.querySelectorAll('a, button');
+    const addInteractiveHover = () => cursorElement.classList.add('interactive-hover');
+    const removeInteractiveHover = () => cursorElement.classList.remove('interactive-hover');
+    const addActiveState = () => cursorElement.classList.add('active-state');
+    const removeActiveState = () => cursorElement.classList.remove('active-state');
+
+    interactiveElements.forEach(el => {
+      el.addEventListener('mouseenter', addInteractiveHover);
+      el.addEventListener('mouseleave', removeInteractiveHover);
+      el.addEventListener('mousedown', addActiveState);
+      el.addEventListener('mouseup', removeActiveState);
+    });
+
+    // Cleanup function
+    return () => {
+      // Remove class from body when component unmounts
+      document.body.classList.remove('landing-cursor-active');
+
+      document.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('scroll', onScroll);
+      if (document.body.contains(cursorElement)) {
+        document.body.removeChild(cursorElement);
+      }
+      interactiveElements.forEach(el => {
+        el.removeEventListener('mouseenter', addInteractiveHover);
+        el.removeEventListener('mouseleave', removeInteractiveHover);
+        el.removeEventListener('mousedown', addActiveState);
+        el.removeEventListener('mouseup', removeActiveState);
+      });
+    };
   }, [router]);
 
   const defaultVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "circOut" } },
+    hidden: { opacity: 0, y: 25 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { 
+        duration: 0.7,
+        ease: "easeInOut"
+      }
+    },
   };
 
   const staggerContainer = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+      transition: { staggerChildren: 0.2, delayChildren: 0.25 },
     },
   };
 
-  const features = [
-    {
-      icon: <Users className="w-8 h-8" />,
-      title: 'Connect with Peers',
-      description: 'Discover and connect with students who share your interests and academic focus.',
-    },
-    {
-      icon: <Zap className="w-8 h-8" />,
-      title: 'Collaborate on Projects',
-      description: 'Find project partners and collaborate on exciting academic and personal ventures.',
-    },
-    {
-      icon: <Shield className="w-8 h-8" />,
-      title: 'Student-Only Platform',
-      description: 'A safe, verified community exclusively for students to network and learn.',
-    },
-    {
-      icon: <Globe className="w-8 h-8" />,
-      title: 'Global Network',
-      description: 'Connect with students from universities around the world and expand your horizons.',
-    },
-  ];
+  // const features = [ // Commented out unused variable
+  //   {
+  //     icon: <Users className="w-8 h-8" />,
+  //     title: 'Connect with Peers',
+  //     description: 'Discover and connect with students who share your interests and academic focus.',
+  //   },
+  //   {
+  //     icon: <Zap className="w-8 h-8" />,
+  //     title: 'Collaborate on Projects',
+  //     description: 'Find project partners and collaborate on exciting academic and personal ventures.',
+  //   },
+  //   {
+  //     icon: <Shield className="w-8 h-8" />,
+  //     title: 'Student-Only Platform',
+  //     description: 'A safe, verified community exclusively for students to network and learn.',
+  //   },
+  //   {
+  //     icon: <Globe className="w-8 h-8" />,
+  //     title: 'Global Network',
+  //     description: 'Connect with students from universities around the world and expand your horizons.',
+  //   },
+  // ];
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground overflow-x-hidden">
@@ -83,8 +168,17 @@ export default function HomePage() {
           </Link>
           
           <div className="flex items-center gap-3">
-            <Button onClick={() => router.push('/onboarding')} className="shadow-sm hover:shadow-primary/50 transition-shadow">
-              Get Started Free <ArrowRight className="w-4 h-4 ml-2" />
+            <Button 
+              onClick={() => router.push('/onboarding')} 
+              className="shadow-sm hover:shadow-primary/50 transition-all duration-300 group bg-primary hover:bg-primary/90 text-primary-foreground"
+            >
+              Get Started Free 
+              <motion.div 
+                className="ml-2 inline-block"
+                whileHover={{ x: 3, transition: { type: 'spring', stiffness: 400, damping: 10 } }} // Arrow moves right on hover
+              >
+                <ArrowRight className="w-4 h-4" />
+              </motion.div>
             </Button>
           </div>
         </div>
@@ -106,10 +200,9 @@ export default function HomePage() {
             >
               Unlock Your Potential.<br /> 
               <span className="relative">
-                <span className="bg-gradient-to-r from-primary via-accent to-pink-500 bg-clip-text text-transparent">
+                <span className="animated-gradient-text bg-clip-text text-transparent">
                   Connect with Brilliance.
                 </span>
-                {/* Optional: subtle underline SVG or element */}
               </span>
             </motion.h1>
             
@@ -222,8 +315,71 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Why PeerConnect? Section - NEW */}
+      <section className="py-20 md:py-28 bg-gradient-to-b from-background to-muted/30">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            variants={staggerContainer} 
+            initial="hidden" 
+            whileInView="visible" 
+            viewport={{ once: true, amount: 0.2 }}
+            className="text-center mb-16 md:mb-20"
+          >
+            <motion.h2 
+              variants={defaultVariants}
+              className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl"
+            >
+              Why <span className="animated-gradient-text bg-clip-text text-transparent">PeerConnect</span>?
+            </motion.h2>
+            <motion.p 
+              variants={defaultVariants}
+              className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto"
+            >
+              Unlock a focused, collaborative, and growth-oriented networking experience tailored for students.
+            </motion.p>
+          </motion.div>
+
+          <motion.div 
+            variants={staggerContainer} 
+            initial="hidden" 
+            whileInView="visible" 
+            viewport={{ once: true, amount: 0.2 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10"
+          >
+            {[{
+              icon: <Shield className="w-10 h-10 text-primary" />,
+              title: 'Exclusively Students',
+              description: 'Connect in a verified, safe space designed for academic and peer collaboration, free from external noise.',
+            }, {
+              icon: <Zap className="w-10 h-10 text-primary" />,
+              title: 'Laser-Focused Networking',
+              description: 'Find peers by specific skills, project interests, or academic departments. Make relevant connections, fast.',
+            }, {
+              icon: <Rocket className="w-10 h-10 text-primary" />,
+              title: 'Accelerate Your Growth',
+              description: 'From finding project partners to sharing niche knowledge, PeerConnect is your launchpad for success.',
+            }].map((item, index) => (
+              <motion.div 
+                key={index} 
+                variants={defaultVariants} 
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: index * 0.2 + 0.3 }}
+                className="bg-card p-6 rounded-xl shadow-lg hover:shadow-primary/20 transition-all duration-300 border border-border/60 hover:border-primary/50 transform hover:-translate-y-1.5 group"
+              >
+                <div className="flex items-center justify-center mb-5 w-16 h-16 bg-gradient-to-br from-primary/15 to-accent/15 text-primary rounded-full mx-auto shadow-inner ring-2 ring-primary/20 transition-all duration-300 group-hover:from-primary/20 group-hover:to-accent/20 group-hover:ring-primary/30">
+                  {item.icon}
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-2 text-center">{item.title}</h3>
+                <p className="text-muted-foreground text-sm text-center leading-relaxed">{item.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
       {/* How It Works Section */}
-      <section className="py-20 md:py-28 bg-muted/50">
+      <section ref={howItWorksRef} className="py-20 md:py-28 bg-muted/50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             variants={staggerContainer} 
@@ -254,10 +410,7 @@ export default function HomePage() {
                   d="M50 50 Q 250 20 500 50 T 950 50"
                   strokeWidth="3"
                   strokeDasharray="10 10"
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  whileInView={{ pathLength: 1, opacity: 1 }}
-                  transition={{ duration: 2, delay: 0.5, ease: "easeInOut" }}
-                  viewport={{ once: true, amount: 0.5 }}
+                  style={{ pathLength }}
                 />
               </svg>
             </div>
@@ -277,15 +430,28 @@ export default function HomePage() {
             }].map((step, index) => (
               <motion.div 
                 key={index} 
-                variants={defaultVariants} 
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: index * 0.2 + 0.2 }}
-                className="bg-card p-6 rounded-xl shadow-lg hover:shadow-primary/20 transition-shadow duration-300 z-10 border border-border/70"
+                initial={{ opacity: 0, y: 60, scale: 0.85 }}
+                whileInView={{ 
+                    opacity: 1, 
+                    y: 0, 
+                    scale: 1, 
+                    transition: { 
+                        duration: 0.7,
+                        delay: index * 0.25 + 0.3,
+                        ease: "circOut"
+                    }
+                }}
+                viewport={{ once: true, amount: 0.4 }}
+                className="bg-card p-6 rounded-xl shadow-lg hover:shadow-primary/20 transition-all duration-300 z-10 border border-border/70 transform hover:-translate-y-1.5 hover:border-primary/40"
               >
-                <div className="flex items-center justify-center mb-5 w-16 h-16 bg-primary/10 text-primary rounded-full mx-auto shadow-md">
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.5}}
+                    whileInView={{ opacity: 1, scale: 1, transition: { duration:0.4, delay: index * 0.2 + 0.4 }}}
+                    viewport={{ once: true, amount: 0.3 }}
+                    className="flex items-center justify-center mb-5 w-16 h-16 bg-gradient-to-br from-primary/10 to-accent/10 text-primary rounded-full mx-auto shadow-md ring-2 ring-primary/15 group-hover:ring-primary/30 transition-all duration-300"
+                >
                   {step.icon}
-                </div>
+                </motion.div>
                 <h3 className="text-xl font-semibold text-foreground mb-2 text-center">{step.title}</h3>
                 <p className="text-muted-foreground text-sm text-center leading-relaxed">{step.description}</p>
               </motion.div>
@@ -351,17 +517,20 @@ export default function HomePage() {
                 whileInView="visible"
                 viewport={{ once: true, amount: index * 0.2 + 0.3 }}
               >
-                <Card className="h-full flex flex-col bg-card shadow-lg hover:shadow-xl transition-shadow duration-300 border-border/70 overflow-hidden">
-                  <CardContent className="p-6 flex-grow flex flex-col items-center text-center">
-                    <Avatar className="w-20 h-20 mb-5 ring-4 ring-primary/20 shadow-md">
+                <Card className="h-full flex flex-col bg-card shadow-lg hover:shadow-2xl transition-all duration-300 border-border/60 rounded-xl overflow-hidden transform hover:-translate-y-1 group">
+                  <CardContent className="p-6 md:p-8 flex-grow flex flex-col items-start text-left relative">
+                    <Quote className="w-10 h-10 text-primary/30 absolute top-4 right-4 transform transition-transform duration-300 group-hover:scale-110 group-hover:text-primary/50" />
+                    <Avatar className="w-16 h-16 mb-5 ring-4 ring-primary/20 shadow-md border-2 border-card">
                       <AvatarImage src={testimonial.avatarUrl} alt={testimonial.name} />
-                      <AvatarFallback className="text-2xl bg-muted text-muted-foreground font-semibold">{testimonial.fallback}</AvatarFallback>
+                      <AvatarFallback className="text-xl bg-muted text-muted-foreground font-semibold">{testimonial.fallback}</AvatarFallback>
                     </Avatar>
-                    <blockquote className="text-muted-foreground italic text-lg leading-relaxed mb-4">
-                      &ldquo;{testimonial.testimonial}&rdquo;
+                    <blockquote className="text-muted-foreground text-base leading-relaxed mb-5 flex-grow">
+                      {testimonial.testimonial}
                     </blockquote>
-                    <p className="font-semibold text-foreground text-lg">{testimonial.name}</p>
-                    <p className="text-sm text-primary font-medium">{testimonial.role}</p>
+                    <div className="mt-auto w-full pt-4 border-t border-border/50">
+                        <p className="font-semibold text-foreground text-base">{testimonial.name}</p>
+                        <p className="text-sm text-primary/90 font-medium">{testimonial.role}</p>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -371,11 +540,14 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 md:py-28 relative overflow-hidden">
-          {/* Background decorative elements */}
-          <div aria-hidden="true" className="absolute inset-0 -z-10">
-            <div className="absolute -left-40 -top-40 w-[50rem] h-[50rem] bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl opacity-40"></div>
-            <div className="absolute -right-40 -bottom-40 w-[50rem] h-[50rem] bg-gradient-to-tl from-accent/10 to-transparent rounded-full blur-3xl opacity-40"></div>
+      <section className="py-20 md:py-28 relative overflow-hidden bg-background">
+          {/* Background decorative elements - Updated with new animation class */}
+          <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
+            {/* Ensure these elements do not have their own translateY transform conflicting with JS */}
+            <div className="absolute -left-40 -top-40 w-[50rem] h-[50rem] bg-gradient-to-br from-primary/15 to-transparent rounded-full blur-3xl opacity-50 animate-pulse-bg-1" 
+                 style={{ transform: 'translate(-10%, -10%) scale(1)' }}></div>
+            <div className="absolute -right-60 -bottom-52 w-[60rem] h-[60rem] bg-gradient-to-tl from-accent/15 to-transparent rounded-full blur-3xl opacity-50 animate-pulse-bg-2" 
+                 style={{ transform: 'translate(10%, 10%) scale(1)' }}></div>
           </div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -417,35 +589,38 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 bg-muted/30 border-t">
+      <footer className="pt-16 pb-12 bg-muted/40 relative">
+        {/* Subtle gradient top border */}
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+        
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
             <div className="flex items-center justify-center md:justify-start gap-2">
-              <div className="w-9 h-9 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center shadow-md">
-                <span className="text-white font-bold text-lg">P</span>
+              <div className="w-10 h-10 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center shadow-md">
+                <span className="text-white font-bold text-xl">P</span>
               </div>
-              <span className="text-xl font-bold text-foreground">PeerConnect</span>
+              <span className="text-2xl font-bold text-foreground">PeerConnect</span>
             </div>
             
-            <nav className="flex justify-center gap-4 md:gap-6">
+            <nav className="flex justify-center gap-x-5 md:gap-x-7">
               {[
-                { label: "About", href: "#" }, 
-                { label: "Features", href: "#" }, 
-                { label: "Pricing", href: "#" }, // Example links
-                { label: "Contact", href: "#" }
+                { label: "About", href: "#features-section" }, 
+                { label: "How it Works", href: "#how-it-works-section" }, // Example links
+                { label: "Testimonials", href: "#testimonials-section" },
+                // { label: "Contact", href: "#" }
               ].map(link => (
-                <Link key={link.label} href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link key={link.label} href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 font-medium">
                   {link.label}
                 </Link>
               ))}
             </nav>
 
             <p className="text-sm text-muted-foreground text-center md:text-right">
-              © {new Date().getFullYear()} PeerConnect. All rights reserved.
+              &copy; {new Date().getFullYear()} PeerConnect. All rights reserved.
             </p>
           </div>
-          <div className="mt-8 pt-8 border-t border-border/50 text-center text-xs text-muted-foreground">
-            Built by students, for students. <span className="text-primary">#StudentSuccess</span>
+          <div className="mt-10 pt-8 border-t border-border/60 text-center text-xs text-muted-foreground/80">
+            Built by students, for students, with <span className="text-primary/90 font-medium">passion</span>.
           </div>
         </div>
       </footer>
