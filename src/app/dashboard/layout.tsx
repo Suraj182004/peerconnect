@@ -154,8 +154,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
         </div>
       </motion.header>
-      <main className="flex-1 w-full max-w-full mx-auto py-6 sm:py-8">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <main className="flex-1 w-full max-w-full mx-auto py-4 sm:py-5">
+        <div className="container mx-auto px-3 sm:px-4 lg:px-6">
             {children}
         </div>
       </main>

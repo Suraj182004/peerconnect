@@ -163,17 +163,17 @@ const ConnectionsPage = () => {
         variants={pageVariants}
         initial="hidden"
         animate="visible"
-        className="max-w-full mx-auto py-2 sm:py-4"
+        className="max-w-full mx-auto py-2 sm:py-3"
     >
-      <motion.div variants={fadeInUp} className="mb-6 md:mb-8 px-1">
+      <motion.div variants={fadeInUp} className="mb-5 md:mb-6 px-1">
         <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">Manage Your Network</h1>
-        <p className="mt-1.5 text-sm sm:text-base text-muted-foreground max-w-2xl">
+        <p className="mt-1 text-sm sm:text-base text-muted-foreground max-w-2xl">
           View your connections, track sent requests, and respond to incoming invitations to expand your professional circle.
         </p>
       </motion.div>
 
       <Tabs defaultValue="my-connections" className="w-full">
-        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 bg-muted/70 rounded-lg p-1 h-auto shadow-inner mb-6 md:mb-8">
+        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 bg-muted/70 rounded-lg p-1 h-auto shadow-inner mb-5 md:mb-6">
           <TabsTrigger value="my-connections" className="py-2.5 text-sm data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-md transition-all">
             <UserCheck className="w-4 h-4 mr-2 opacity-80" /> My Connections ({isLoading && !myConnectionProfiles.length ? '-' : myConnectionProfiles.length})
             </TabsTrigger>

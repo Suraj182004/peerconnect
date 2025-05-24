@@ -108,24 +108,24 @@ export const StudentCard = ({
             </Avatar>
           </Link>
         </CardHeader>
-        <CardContent className="pt-5 pb-4 px-4 text-center flex-grow flex flex-col items-center">
+        <CardContent className="pt-4 pb-3 px-3 text-center flex-grow flex flex-col items-center">
           <Link href={`/dashboard/profile/${profile.id}`} className="block">
             <CardTitle className="text-lg font-semibold text-foreground hover:text-primary transition-colors">
               {profile.firstName} {profile.lastName}
             </CardTitle>
           </Link>
           <p className="text-sm text-muted-foreground mt-0.5">{profile.department}</p>
-          <p className="text-xs text-muted-foreground mb-2">{profile.university}</p>
+          <p className="text-xs text-muted-foreground mb-1">{profile.university}</p>
           
           {profile.bio && 
-            <p className="text-xs text-muted-foreground mt-2 px-2 line-clamp-2 text-balance flex-grow max-h-[40px] overflow-hidden">
+            <p className="text-xs text-muted-foreground mt-2 px-1 line-clamp-2 text-balance flex-grow max-h-[40px] overflow-hidden">
               {profile.bio}
             </p>
           }
 
           {profile.skills && profile.skills.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-border/50 w-full">
-              <div className="flex flex-wrap justify-center gap-1.5 px-1">
+            <div className="mt-2 pt-2 border-t border-border/50 w-full">
+              <div className="flex flex-wrap justify-center gap-1 px-1">
                 {profile.skills.slice(0, 3).map((skill) => (
                   <Badge key={skill} variant="secondary" className="text-xs px-2 py-0.5 font-normal border-transparent shadow-sm">
                     {skill}
@@ -140,7 +140,7 @@ export const StudentCard = ({
             </div>
           )}
         </CardContent>
-        <CardFooter className="p-3 border-t border-border/50 mt-auto bg-muted/30">
+        <CardFooter className="p-2.5 border-t border-border/50 mt-auto bg-muted/30">
           {currentUserId && profile.id !== currentUserId && (
             <> 
             {isReceivedRequest && requestId ? (

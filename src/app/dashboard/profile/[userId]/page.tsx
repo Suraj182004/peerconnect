@@ -175,8 +175,8 @@ const DynamicUserProfilePage = () => {
           </div>
 
           {/* Content below banner */}
-          <div className="p-5 sm:p-6 relative">
-            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-x-5 gap-y-4 -mt-28 sm:-mt-32 relative z-10">
+          <div className="p-4 sm:p-5 relative">
+            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-x-5 gap-y-3 -mt-28 sm:-mt-32 relative z-10">
               {/* Avatar - Larger and overlapping */}
               <motion.div 
                 initial={{scale:0.5, opacity:0}} 
@@ -193,7 +193,7 @@ const DynamicUserProfilePage = () => {
               </motion.div>
               
               {/* Text info block */}
-              <div className="flex-1 text-center sm:text-left mt-3 sm:mt-0 sm:pb-2 min-w-0 group">
+              <div className="flex-1 text-center sm:text-left mt-2 sm:mt-0 sm:pb-1 min-w-0 group">
                 <h1 
                     className="text-3xl md:text-4xl font-bold text-foreground tracking-tight truncate group-hover:text-primary transition-colors duration-300 cursor-default" 
                     title={`${user.firstName} ${user.lastName}`}
@@ -204,17 +204,17 @@ const DynamicUserProfilePage = () => {
                   {user.department} &bull; {user.year}
                 </p>
                 {user.university && (
-                  <p className="text-sm text-muted-foreground/90 flex items-center justify-center sm:justify-start mt-1.5 truncate cursor-default">
+                  <p className="text-sm text-muted-foreground/90 flex items-center justify-center sm:justify-start mt-1 truncate cursor-default">
                     <School className="w-4 h-4 mr-1.5 text-muted-foreground/70 shrink-0" /> {user.university}
                   </p>
                 )}
-                <p className="text-xs text-muted-foreground/80 mt-1.5 cursor-default">
+                <p className="text-xs text-muted-foreground/80 mt-1 cursor-default">
                     Member since {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                 </p>
               </div>
 
               {/* Action button block - Aligned to the right */}
-              <div className="shrink-0 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto sm:ml-auto sm:self-end sm:pb-2">
+              <div className="shrink-0 flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto sm:ml-auto sm:self-end sm:pb-1">
                 {isCurrentUserProfile ? (
                   <>
                     <Button variant="outline" size="sm" onClick={() => router.push('/onboarding')} 
@@ -227,7 +227,7 @@ const DynamicUserProfilePage = () => {
                     </Button>
                   </>
                 ) : (
-                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                     {getConnectButton()} 
                     <Button variant="outline" size="sm" onClick={() => setIsAiAnalysisDialogOpen(true)} 
                             className="shadow-md hover:shadow-lg transition-all duration-300 border-purple-500/50 hover:border-purple-500/80 bg-card/90 backdrop-blur-sm w-full sm:w-auto group/button hover:scale-105 text-purple-600 hover:text-purple-700">
@@ -250,9 +250,9 @@ const DynamicUserProfilePage = () => {
       />
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-6">
         {/* Left Column / Main Column */}
-        <div className="lg:col-span-2 space-y-6 md:space-y-8">
+        <div className="lg:col-span-2 space-y-5 md:space-y-6">
           {user.bio && (
             <SectionCard title="About Me" icon={Users2} customDelay={1}>
               <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed text-balance">
@@ -270,7 +270,7 @@ const DynamicUserProfilePage = () => {
                     key={exp.id} 
                     variants={defaultVariants} 
                     custom={idx * 0.5 + 2} // Stagger children
-                    className="p-4 rounded-lg border border-border/70 hover:shadow-md transition-shadow bg-card/50 hover:bg-card/90"
+                    className="p-3 sm:p-4 rounded-lg border border-border/70 hover:shadow-md transition-shadow bg-card/50 hover:bg-card/90"
                   >
                     <div className="flex items-start gap-3">
                         {exp.companyLogo ? 
@@ -325,7 +325,7 @@ const DynamicUserProfilePage = () => {
                     key={proj.id} 
                     variants={defaultVariants} 
                     custom={idx * 0.5 + 3} // Stagger children
-                    className="p-4 rounded-lg border border-border/70 hover:shadow-md transition-shadow bg-card/50 hover:bg-card/90"
+                    className="p-3 sm:p-4 rounded-lg border border-border/70 hover:shadow-md transition-shadow bg-card/50 hover:bg-card/90"
                   >
                     {proj.imageUrl && (
                         <div className="mb-3 rounded-md overflow-hidden border border-border/50 max-h-48 relative">
