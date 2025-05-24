@@ -125,7 +125,13 @@ const ConnectionsPage = () => {
       >
         {profiles.map(profile => {
           let originalRequestId: string | undefined = undefined;
-          let cardProps: any = { profile };
+          const cardProps: { 
+            profile: UserProfile; 
+            isMyConnection?: boolean; 
+            isSentRequest?: boolean;
+            isReceivedRequest?: boolean;
+            requestId?: string;
+          } = { profile };
 
           if (tabName === "My Connections") {
             cardProps.isMyConnection = true;

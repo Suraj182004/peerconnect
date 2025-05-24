@@ -11,7 +11,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Paperclip, SendHorizonal, MessageSquareText, Users, Search } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const MessagesPage = () => {
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);

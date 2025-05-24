@@ -160,8 +160,7 @@ const OnboardingPage = () => {
         return;
       }
       const fileType = file.type as string;
-      const isSupported = APP_CONFIG.supportedImageTypes.includes(fileType as "image/jpeg" | "image/png" | "image/webp");
-      if (!isSupported) {
+      if (!APP_CONFIG.supportedImageTypes.some(type => type === fileType)) {
         step4Form.setError("profilePicture", { type: "manual", message: "Invalid file type. Please upload JPG, PNG, or WebP." });
         return;
       }

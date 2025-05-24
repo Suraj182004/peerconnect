@@ -206,12 +206,14 @@ class LocalStorageManager {
   }
 
   updateUIPreferences(updates: Partial<LocalStorageData['uiPreferences']>): boolean {
-    const current = this.getUIPreferences() || { viewMode: 'grid', theme: 'light' };
+    // Always provide default values to ensure we have complete object
+    const defaultPrefs = { viewMode: 'grid' as const, theme: 'light' as const };
+    const current = this.getUIPreferences() || defaultPrefs;
     
-    // Ensure all required fields are present
-    const updated = { 
-      viewMode: (updates?.viewMode !== undefined) ? updates.viewMode : current.viewMode, 
-      theme: (updates?.theme !== undefined) ? updates.theme : current.theme
+    // Create a type-safe updated object with explicit properties
+    const updated: LocalStorageData['uiPreferences'] = { 
+      viewMode: updates?.viewMode ?? current.viewMode, 
+      theme: updates?.theme ?? current.theme
     };
     
     return this.setUIPreferences(updated);
