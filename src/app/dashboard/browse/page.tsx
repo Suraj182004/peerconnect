@@ -119,7 +119,8 @@ const BrowseStudentsPage = () => {
       if (checked) {
         newCategoryFilters = [...currentCategoryFilters, value];
       } else {
-        newCategoryFilters = currentCategoryFilters.filter(item => item !== value);
+        const filterArray = Array.isArray(currentCategoryFilters) ? currentCategoryFilters : [currentCategoryFilters];
+        newCategoryFilters = filterArray.filter(item => item !== value);
       }
       
       const updatedFilters = {

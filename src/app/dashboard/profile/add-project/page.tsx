@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { getUserProfile, updateUserProfile } from '@/lib/localStorage';
 import { UserProfile, Project } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, Rocket, PlusCircle, CalendarDays, Link2, Users2 } from 'lucide-react';
+import { ArrowLeft, Rocket, PlusCircle } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 const projectSchema = z.object({
@@ -70,9 +70,11 @@ const AddProjectPage = () => {
 
     const newProject: Project = {
       id: uuidv4(),
-      ...data,
-      // Ensure empty strings are not passed if optional fields are empty
-      projectUrl: data.projectUrl || undefined,
+      title: data.projectName,
+      description: data.description,
+      technologies: data.technologies.split(',').map(tech => tech.trim()).filter(Boolean),
+      startDate: data.startDate,
+      url: data.projectUrl || undefined,
       repoUrl: data.repoUrl || undefined,
       endDate: data.endDate || undefined,
       teamMembers: data.teamMembers || undefined,

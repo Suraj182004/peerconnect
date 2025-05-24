@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -57,6 +57,8 @@ type Step1Data = z.infer<typeof step1Schema>;
 type Step2Data = z.infer<typeof step2Schema>;
 type Step3Data = z.infer<typeof step3Schema>;
 type Step4Data = z.infer<typeof step4Schema>;
+
+type SocialLinkKey = 'linkedin' | 'github' | 'twitter' | 'portfolio';
 
 const OnboardingPage = () => {
   const router = useRouter();
@@ -157,7 +159,9 @@ const OnboardingPage = () => {
         step4Form.setError("profilePicture", { type: "manual", message: `File size should be less than ${APP_CONFIG.maxFileSize / (1024*1024)}MB` });
         return;
       }
-      if (!APP_CONFIG.supportedImageTypes.includes(file.type)) {
+      const fileType = file.type as string;
+      const isSupported = APP_CONFIG.supportedImageTypes.includes(fileType as "image/jpeg" | "image/png" | "image/webp");
+      if (!isSupported) {
         step4Form.setError("profilePicture", { type: "manual", message: "Invalid file type. Please upload JPG, PNG, or WebP." });
         return;
       }
@@ -194,6 +198,21 @@ const OnboardingPage = () => {
       {label}
     </Badge>
   );
+
+  const getSocialLinkRegister = (platform: SocialLinkKey) => {
+    switch (platform) {
+      case 'linkedin':
+        return step4Form.register('socialLinks.linkedin');
+      case 'github':
+        return step4Form.register('socialLinks.github');
+      case 'twitter':
+        return step4Form.register('socialLinks.twitter');
+      case 'portfolio':
+        return step4Form.register('socialLinks.portfolio');
+      default:
+        return step4Form.register('socialLinks.portfolio');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -238,7 +257,7 @@ const OnboardingPage = () => {
                   <motion.div key="step1" variants={fadeInVariants} initial="hidden" animate="visible" exit="exit">
                     <div className="space-y-6">
                       <div className="text-center">
-                        <h2 className="text-2xl font-bold text-foreground mb-2">Let's get started</h2>
+                        <h2 className="text-2xl font-bold text-foreground mb-2">Let&apos;s get started</h2>
                         <p className="text-muted-foreground">Create your account to join the student community</p>
                       </div>
                       <form onSubmit={step1Form.handleSubmit(onStep1Submit)} className="space-y-6">
@@ -482,7 +501,13 @@ const OnboardingPage = () => {
                               />
                             </Button>
                           </div>
-                          {step4Form.formState.errors.profilePicture && <p className="text-sm text-destructive mt-2">{step4Form.formState.errors.profilePicture.message}</p>}
+                          {step4Form.formState.errors.profilePicture && (
+                            <p className="text-sm text-destructive mt-2">
+                              {typeof step4Form.formState.errors.profilePicture.message === 'string' 
+                                ? step4Form.formState.errors.profilePicture.message 
+                                : 'Invalid file'}
+                            </p>
+                          )}
                         </div>
 
                         {/* Bio */}
@@ -510,17 +535,26 @@ const OnboardingPage = () => {
                                 platform.icon === 'github' ? Github :
                                 platform.icon === 'twitter' ? Twitter :
                                 Globe;
+                              
+                              // Safe path with type assertion for common social platforms
+                              const socialKey = platformKey.toLowerCase();
+                              const fieldName = `socialLinks.${socialKey}` as const;
+                              
                               return (
                                 <div key={platformKey} className="relative">
                                   <IconComponent className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground`} style={{ color: platform.color}} />
                                   <Input 
-                                    id={`socialLinks.${platformKey.toLowerCase()}`}
+                                    id={fieldName}
                                     placeholder={`${platform.name} Profile URL (e.g. ${platform.baseUrl}yourusername)`}
-                                    {...step4Form.register(`socialLinks.${platformKey.toLowerCase()}` as const)}
+                                    {...getSocialLinkRegister(socialKey as SocialLinkKey)}
                                     className="pl-10"
                                   />
-                                  {step4Form.formState.errors.socialLinks?.[platformKey.toLowerCase() as keyof Step4Data['socialLinks']] && 
-                                    <p className="text-sm text-destructive mt-1">{step4Form.formState.errors.socialLinks?.[platformKey.toLowerCase() as keyof Step4Data['socialLinks']]?.message}</p>}
+                                  {step4Form.formState.errors.socialLinks && 
+                                    step4Form.formState.errors.socialLinks[socialKey as keyof typeof step4Form.formState.errors.socialLinks] && (
+                                    <p className="text-sm text-destructive mt-1">
+                                      Invalid URL format
+                                    </p>
+                                  )}
                                 </div>
                               );
                             })}

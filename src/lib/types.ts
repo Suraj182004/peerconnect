@@ -1,4 +1,4 @@
-import { INDIAN_COLLEGES } from "./constants"; // Import the constant array
+// Import the constant array
 
 // Core User Types
 export interface UserProfile {
@@ -45,8 +45,8 @@ export type ConnectionStatus = 'pending' | 'accepted' | 'declined' | 'blocked';
 
 export interface ConnectionRequest {
   id: string;
-  fromUserId: string;
-  toUserId: string;
+  senderId: string;
+  receiverId: string;
   message?: string;
   status: ConnectionStatus;
   createdAt: Date;
@@ -99,11 +99,11 @@ export interface Step1Data {
   firstName: string;
   lastName: string;
   email: string;
-  password?: string; // Optional if only for onboarding display
+  password: string;
 }
 
 export interface Step2Data {
-  university: typeof INDIAN_COLLEGES[number];
+  university: string;
   collegeId: string;
   year: string;
   department: string;
@@ -116,9 +116,14 @@ export interface Step3Data {
 }
 
 export interface Step4Data {
-  bio: string;
-  profilePicture?: File | string; // File for upload, string for URL
-  socialLinks?: SocialLinks;
+  bio?: string;
+  profilePicture?: string | File;
+  socialLinks?: {
+    linkedin?: string;
+    github?: string;
+    twitter?: string;
+    portfolio?: string;
+  };
 }
 
 export interface OnboardingFormData {
@@ -402,6 +407,8 @@ export interface Project {
   url?: string;
   repoUrl?: string;
   imageUrl?: string;
+  projectUrl?: string;
+  teamMembers?: string;
 }
 
 export interface Experience {

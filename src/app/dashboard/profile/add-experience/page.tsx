@@ -25,7 +25,7 @@ const experienceSchema = z.object({
   employmentType: z.enum(['Full-time', 'Part-time', 'Internship', 'Freelance', 'Contract', 'Volunteer']),
   startDate: z.string().refine((date) => !isNaN(Date.parse(date)), { message: 'Please enter a valid start date.' }),
   endDate: z.string().optional(),
-  isCurrent: z.boolean().default(false),
+  isCurrent: z.boolean(),
   description: z.string().min(10, { message: 'Description must be at least 10 characters.' }).max(1000, { message: 'Description must not exceed 1000 characters.' }),
   skills: z.string().optional(), // Comma-separated skills
 }).refine(data => {
@@ -59,7 +59,7 @@ const AddExperiencePage = () => {
       employmentType: 'Internship',
       startDate: '',
       endDate: '',
-      isCurrent: false,
+      isCurrent: false as boolean,
       description: '',
       skills: '',
     },
@@ -89,7 +89,7 @@ const AddExperiencePage = () => {
     toast({
       title: 'Experience Added',
       description: `${data.title} at ${data.companyName} has been added to your profile.`,
-      variant: 'success',
+      variant: 'default',
     });
     router.push(`/dashboard/profile/${currentUser.id}`);
     router.refresh(); // to ensure profile page re-fetches or re-renders with new data
