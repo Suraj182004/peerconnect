@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ConnectionsProvider } from "@/contexts/ConnectionsContext";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -19,10 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-inter antialiased`}>
-        <ConnectionsProvider>
-        {children}
-          <Toaster richColors position="top-right" />
-        </ConnectionsProvider>
+        <ThemeProvider>
+          <ConnectionsProvider>
+            {children}
+            <Toaster richColors position="top-right" />
+          </ConnectionsProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

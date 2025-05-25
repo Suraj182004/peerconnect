@@ -14,11 +14,12 @@ import {
     DropdownMenuSeparator, 
     DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { Search, Users, Home, UserCog, LogOut, UserCircle2, Settings, Bell, MessageSquare, UserCheck } from 'lucide-react';
+import { Search, Users, Home, UserCog, LogOut, UserCircle2, Settings, Bell, MessageSquare, UserCheck, Sun, Moon } from 'lucide-react';
 import { UserProfile } from '@/lib/types';
 import { getUserProfile, localStorageManager } from '@/lib/localStorage';
 import { NAVIGATION_ITEMS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -28,6 +29,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const pathname = usePathname();
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     const user = getUserProfile();
@@ -111,6 +113,17 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               {/* Notification Bell - Placeholder */}
               <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary hover:bg-muted/70 rounded-full">
                 <Bell className="w-5 h-5" />
+              </Button>
+
+              {/* Theme Toggle Button */}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+                className="text-muted-foreground hover:text-primary hover:bg-muted/70 rounded-full"
+                aria-label="Toggle theme"
+              >
+                {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
               </Button>
 
               {currentUser ? (
