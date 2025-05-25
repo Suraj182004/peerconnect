@@ -15,7 +15,7 @@ PeerConnect offers a comprehensive suite of features designed to enhance the stu
 -   **Detailed Profile Management & Showcase**: Users have full control over their profiles. They can view their public profile as others see it, and easily edit and update all sections of their information. This includes adding or modifying skills, interests, project details, and linking to external social/professional profiles (e.g., LinkedIn, GitHub, personal portfolio).
 -   **Dual Theme (Dark/Light Mode) & Accessibility**: To ensure a comfortable viewing experience in various lighting conditions and to cater to user preferences, PeerConnect offers a user-selectable theme (dark or light mode). This preference is saved locally and persists across browsing sessions, contributing to better accessibility.
 
-## 🖼️ Screenshots (Light Theme)
+## 🖼️ Screenshots 
 
 *Illustrating the clean and user-friendly interface of PeerConnect.*
 
@@ -195,7 +195,6 @@ peerconnect/
     └── fonts/                # (If self-hosting fonts) Font files
 
 ```
-*(This structure is an illustrative example based on common best practices and can be adapted. For the most current and detailed structure map, always refer to the `PROJECT_PLAN.md` or explore the codebase directly.)*
 
 ## ⚙️ Getting Started
 
