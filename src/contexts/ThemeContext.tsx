@@ -20,7 +20,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
       const savedPrefs = localStorageManager.getUIPreferences();
-      return savedPrefs.theme || 'light';
+      return savedPrefs?.theme || 'light';
     }
     return 'light'; // Default theme for SSR or if localStorage is not available initially
   });
